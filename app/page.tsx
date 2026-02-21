@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
+import pusherClient from "@/lib/pusher-client";
 
 interface User {
   _id: string;
@@ -40,16 +41,32 @@ export default function HomePage() {
     }
   }, []);
 
-  // Fetch all users for the sidebar
   useEffect(() => {
-    const fetchUsers = async () => {
-      const res = await fetch("/api/users");
-      const data = await res.json();
-      setUsers(data.users);
-    };
+  // Fetch the initial users list on mount
+  const fetchUsers = async () => {
+    const res = await fetch("/api/users");
+    const data = await res.json();
+    setUsers(data.users);
+  };
+  fetchUsers();
 
-    fetchUsers();
-  }, []);
+  // Subscribe to the users channel
+  const channel = pusherClient.subscribe("users-channel");
+
+  // When a new user logs in, add them to the list if not already there
+  channel.bind("user-logged-in", (data: { user: User }) => {
+    setUsers((prev) => {
+      const exists = prev.find((u) => u._id === data.user._id);
+      if (exists) return prev;
+      return [...prev, data.user];
+    });
+  });
+
+  // Unsubscribe when the component unmounts
+  return () => {
+    pusherClient.unsubscribe("users-channel");
+  };
+}, []);
 
   const handleEnter = () => {
     if (currentUser) {

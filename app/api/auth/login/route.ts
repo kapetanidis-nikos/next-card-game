@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { connectToDatabase } from "@/lib/mongodb";
 import User from "@/lib/models/User";
+import pusher from "@/lib/pusher";
 
 export async function POST(req: NextRequest) {
   try {
@@ -21,6 +22,11 @@ export async function POST(req: NextRequest) {
     if (!user) {
       user = await User.create({ username: username.trim().toLowerCase() });
     }
+
+      // Notify all connected clients that a user has logged in
+    await pusher.trigger("users-channel", "user-logged-in", {
+      user: { _id: user._id, username: user.username },
+    });
 
     return NextResponse.json({ user }, { status: 200 });
   } catch (error) {
