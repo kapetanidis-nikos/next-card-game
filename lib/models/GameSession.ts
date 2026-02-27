@@ -34,7 +34,7 @@ export interface IPlayer {
 
 export interface IGameSession extends Document {
   code: string;
-  status: "waiting" | "in_progress" | "finished";
+  status: "waiting" | "in_progress" | "selecting_trump" | "finished";
   hostId: mongoose.Types.ObjectId;
   players: IPlayer[];
   round: number;
@@ -88,7 +88,7 @@ const GameSessionSchema = new Schema<IGameSession>({
   },
   status: {
     type: String,
-    enum: ["waiting", "in_progress", "finished"],
+    enum: ["waiting", "in_progress", "selecting_trump", "finished"],
     default: "waiting",
   },
   hostId: {

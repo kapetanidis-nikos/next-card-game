@@ -31,6 +31,37 @@ export default function LobbyPage() {
   const [loading, setLoading] = useState(false);
   const router = useRouter();
 
+  const handleStart = async () => {
+  if (!currentUser || !game) return;
+  setError("");
+  setLoading(true);
+
+  try {
+    const res = await fetch("/api/game/start", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        gameId: game._id,
+        userId: currentUser._id,
+      }),
+    });
+
+    const data = await res.json();
+
+    if (!res.ok) {
+      setError(data.error || "Something went wrong");
+      return;
+    }
+
+    // Redirect to the game page
+    router.push(`/wizard/${game.code}`);
+  } catch {
+    setError("Something went wrong");
+  } finally {
+    setLoading(false);
+  }
+};
+
   // Redirect to login if not logged in
   useEffect(() => {
     const savedUser = localStorage.getItem("user");
@@ -49,6 +80,10 @@ export default function LobbyPage() {
 
     channel.bind("player-joined", (data: { players: Player[] }) => {
       setGame((prev) => (prev ? { ...prev, players: data.players } : prev));
+    });
+
+    channel.bind("game-started", (data: { roomCode: string }) => {
+    router.push(`/wizard/${data.roomCode}`);
     });
 
     return () => {
@@ -226,6 +261,7 @@ export default function LobbyPage() {
 
             {isHost ? (
               <Button
+                  onClick={handleStart}
                 disabled={game.players.length < 3}
                 className="w-full h-12 rounded-xl font-semibold tracking-widest uppercase text-sm text-[#0a0a0f] disabled:opacity-40 cursor-pointer"
                 style={{ background: "linear-gradient(to right, #c9a84c, #f0d080, #c9a84c)" }}
