@@ -143,7 +143,7 @@ export async function POST(req: NextRequest) {
     if (trickComplete) {
       // Determine trick winner
       const { winnerId, winnerUsername } = determineTrickWinner(
-        game.currentTrick.map((tc) => ({
+        game.currentTrick.map((tc:any) => ({
           playerId: tc.playerId.toString(),
           username: tc.username,
           card: tc.card,
