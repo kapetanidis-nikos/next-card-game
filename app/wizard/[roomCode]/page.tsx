@@ -172,6 +172,11 @@ export default function WizardGamePage() {
       setGame(data.game);
     });
 
+    channel.bind("game-deleted", (data: { reason: string }) => {
+    alert(data.reason);
+    router.push("/");
+   });
+
     // Game finished
     channel.bind("game-finished", (data: { game: Game }) => {
       setGame(data.game);
@@ -183,6 +188,28 @@ export default function WizardGamePage() {
   }, [game?._id]);
 
   // ---- Handlers ----
+
+    const handleLeave = async () => {
+    if (!currentUser || !game) return;
+    setLoading(true);
+
+    try {
+      await fetch("/api/game/leave", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          gameId: game._id,
+          userId: currentUser._id,
+        }),
+      });
+
+      router.push("/");
+    } catch {
+      setError("Something went wrong");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleSelectTrump = async (color: string) => {
     if (!currentUser || !game) return;
@@ -346,6 +373,13 @@ export default function WizardGamePage() {
               </div>
             </div>
           ))}
+        <Button
+          onClick={handleLeave}
+          disabled={loading}
+          className="w-full h-12 rounded-xl font-semibold tracking-widest uppercase text-sm text-red-400 border border-red-500/20 bg-red-500/5 hover:bg-red-500/10 cursor-pointer"
+        >
+          Leave Game
+        </Button>
         </aside>
 
         {/* Main area */}

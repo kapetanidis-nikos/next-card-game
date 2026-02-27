@@ -31,37 +31,6 @@ export default function LobbyPage() {
   const [loading, setLoading] = useState(false);
   const router = useRouter();
 
-  const handleStart = async () => {
-  if (!currentUser || !game) return;
-  setError("");
-  setLoading(true);
-
-  try {
-    const res = await fetch("/api/game/start", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        gameId: game._id,
-        userId: currentUser._id,
-      }),
-    });
-
-    const data = await res.json();
-
-    if (!res.ok) {
-      setError(data.error || "Something went wrong");
-      return;
-    }
-
-    // Redirect to the game page
-    router.push(`/wizard/${game.code}`);
-  } catch {
-    setError("Something went wrong");
-  } finally {
-    setLoading(false);
-  }
-};
-
   // Redirect to login if not logged in
   useEffect(() => {
     const savedUser = localStorage.getItem("user");
@@ -78,18 +47,31 @@ export default function LobbyPage() {
 
     const channel = pusherClient.subscribe(`game-channel-${game._id}`);
 
+    // Another player joined
     channel.bind("player-joined", (data: { players: Player[] }) => {
       setGame((prev) => (prev ? { ...prev, players: data.players } : prev));
     });
 
+    // A player left the lobby
+    channel.bind("player-left", (data: { players: Player[] }) => {
+      setGame((prev) => (prev ? { ...prev, players: data.players } : prev));
+    });
+
+    // Game was deleted because host left
+    channel.bind("game-deleted", (data: { reason: string }) => {
+      setGame(null);
+      setError(data.reason);
+    });
+
+    // Host started the game — redirect all players
     channel.bind("game-started", (data: { roomCode: string }) => {
-    router.push(`/wizard/${data.roomCode}`);
+      router.push(`/wizard/${data.roomCode}`);
     });
 
     return () => {
       pusherClient.unsubscribe(`game-channel-${game._id}`);
     };
-  }, [game?._id]);
+  }, [game?._id, router]);
 
   const handleCreate = async () => {
     if (!currentUser) return;
@@ -152,6 +134,58 @@ export default function LobbyPage() {
     }
   };
 
+  const handleStart = async () => {
+    if (!currentUser || !game) return;
+    setError("");
+    setLoading(true);
+
+    try {
+      const res = await fetch("/api/game/start", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          gameId: game._id,
+          userId: currentUser._id,
+        }),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        setError(data.error || "Something went wrong");
+        return;
+      }
+
+      router.push(`/wizard/${game.code}`);
+    } catch {
+      setError("Something went wrong");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleLeave = async () => {
+    if (!currentUser || !game) return;
+    setLoading(true);
+
+    try {
+      await fetch("/api/game/leave", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          gameId: game._id,
+          userId: currentUser._id,
+        }),
+      });
+
+      setGame(null);
+    } catch {
+      setError("Something went wrong");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const isHost = game?.hostId === currentUser?._id;
 
   return (
@@ -175,6 +209,7 @@ export default function LobbyPage() {
         </div>
 
         {!game ? (
+          // Pre-game — create or join
           <div className="flex flex-col items-center gap-6 w-full max-w-sm">
 
             <Button
@@ -216,7 +251,7 @@ export default function LobbyPage() {
           </div>
 
         ) : (
-
+          // In room — waiting for players
           <div className="flex flex-col items-center gap-6 w-full max-w-sm">
 
             {/* Room code */}
@@ -259,21 +294,35 @@ export default function LobbyPage() {
               </div>
             </div>
 
+            {/* Start game button — only for host, min 3 players */}
             {isHost ? (
               <Button
-                  onClick={handleStart}
-                disabled={game.players.length < 3}
+                onClick={handleStart}
+                disabled={game.players.length < 3 || loading}
                 className="w-full h-12 rounded-xl font-semibold tracking-widest uppercase text-sm text-[#0a0a0f] disabled:opacity-40 cursor-pointer"
                 style={{ background: "linear-gradient(to right, #c9a84c, #f0d080, #c9a84c)" }}
               >
                 {game.players.length < 3
                   ? `Need ${3 - game.players.length} more player${3 - game.players.length > 1 ? "s" : ""}`
-                  : "Start Game"}
+                  : loading ? "Starting..." : "Start Game"}
               </Button>
             ) : (
               <p className="text-white/30 text-xs tracking-widest uppercase">
                 Waiting for host to start the game...
               </p>
+            )}
+
+            {/* Leave game button */}
+            <Button
+              onClick={handleLeave}
+              disabled={loading}
+              className="w-full h-12 rounded-xl font-semibold tracking-widest uppercase text-sm text-red-400 border border-red-500/20 bg-red-500/5 hover:bg-red-500/10 cursor-pointer"
+            >
+              Leave Game
+            </Button>
+
+            {error && (
+              <p className="text-red-400 text-xs text-center tracking-wide">{error}</p>
             )}
 
           </div>
