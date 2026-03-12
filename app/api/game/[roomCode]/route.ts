@@ -4,7 +4,7 @@ import GameSession from "@/lib/models/GameSession";
 
 export async function GET(
   req: NextRequest,
-  { params }: { params: Promise<{ roomCode: string }> }
+  { params }: { params: Promise<{ roomCode: string }> },
 ) {
   try {
     const { roomCode } = await params;
@@ -22,7 +22,7 @@ export async function GET(
   } catch (error) {
     return NextResponse.json(
       { error: "Something went wrong" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

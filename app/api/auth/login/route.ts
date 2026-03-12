@@ -10,7 +10,7 @@ export async function POST(req: NextRequest) {
     if (!username || username.trim() === "") {
       return NextResponse.json(
         { error: "Username is required" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -23,7 +23,7 @@ export async function POST(req: NextRequest) {
       user = await User.create({ username: username.trim().toLowerCase() });
     }
 
-      // Notify all connected clients that a user has logged in
+    // Notify all connected clients that a user has logged in
     await pusher.trigger("users-channel", "user-logged-in", {
       user: { _id: user._id, username: user.username },
     });
@@ -32,7 +32,7 @@ export async function POST(req: NextRequest) {
   } catch (error) {
     return NextResponse.json(
       { error: "Something went wrong" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

@@ -29,4 +29,5 @@ const CardSchema = new Schema<ICard>({
 });
 
 // Checks if Card schema is already established or it creates a new one
-export default mongoose.models.Card || mongoose.model<ICard>("Card", CardSchema);
+export default mongoose.models.Card ||
+  mongoose.model<ICard>("Card", CardSchema);

@@ -8,7 +8,7 @@ import pusher from "@/lib/pusher";
 
 const determineTrickWinner = (
   trick: { playerId: string; username: string; card: ICardInPlay }[],
-  trumpColor: string | null
+  trumpColor: string | null,
 ): { winnerId: string; winnerUsername: string } => {
   let winnerIndex = 0;
 
@@ -35,7 +35,10 @@ const determineTrickWinner = (
     }
 
     // Same color — higher value wins
-    if (card.color === currentWinner.color && (card.value ?? 0) > (currentWinner.value ?? 0)) {
+    if (
+      card.color === currentWinner.color &&
+      (card.value ?? 0) > (currentWinner.value ?? 0)
+    ) {
       winnerIndex = i;
     }
   }
@@ -73,7 +76,7 @@ export async function POST(req: NextRequest) {
     if (!gameId || !userId || !card) {
       return NextResponse.json(
         { error: "gameId, userId and card are required" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -89,7 +92,7 @@ export async function POST(req: NextRequest) {
     if (game.status !== "in_progress") {
       return NextResponse.json(
         { error: "Game is not in progress" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -98,7 +101,7 @@ export async function POST(req: NextRequest) {
     if (currentPlayer.userId.toString() !== userId) {
       return NextResponse.json(
         { error: "It is not your turn" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -107,23 +110,23 @@ export async function POST(req: NextRequest) {
     if (!allBidsPlaced) {
       return NextResponse.json(
         { error: "All players must bid before playing" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
     // Validate the player has the card in their hand
     const playerIndex = game.players.findIndex(
-      (p: IPlayer) => p.userId.toString() === userId
+      (p: IPlayer) => p.userId.toString() === userId,
     );
     const player = game.players[playerIndex];
     const cardIndex = player.hand.findIndex(
-      (c: ICardInPlay) => c.cardId.toString() === card.cardId
+      (c: ICardInPlay) => c.cardId.toString() === card.cardId,
     );
 
     if (cardIndex === -1) {
       return NextResponse.json(
         { error: "You do not have this card" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -143,17 +146,17 @@ export async function POST(req: NextRequest) {
     if (trickComplete) {
       // Determine trick winner
       const { winnerId, winnerUsername } = determineTrickWinner(
-        game.currentTrick.map((tc:any) => ({
+        game.currentTrick.map((tc: any) => ({
           playerId: tc.playerId.toString(),
           username: tc.username,
           card: tc.card,
         })),
-        game.trumpColor
+        game.trumpColor,
       );
 
       // Update tricks won for the winner
       const winnerIndex = game.players.findIndex(
-        (p: IPlayer) => p.userId.toString() === winnerId
+        (p: IPlayer) => p.userId.toString() === winnerId,
       );
       game.players[winnerIndex].tricksWon += 1;
 
@@ -169,9 +172,7 @@ export async function POST(req: NextRequest) {
       game.currentPlayerIndex = winnerIndex;
 
       // Check if the round is over (all hands empty)
-      const roundOver = game.players.every(
-        (p: IPlayer) => p.hand.length === 0
-      );
+      const roundOver = game.players.every((p: IPlayer) => p.hand.length === 0);
 
       if (roundOver) {
         // Calculate scores for this round
@@ -213,15 +214,14 @@ export async function POST(req: NextRequest) {
 
         // Deal cards for the new round
         game.players.forEach((p: IPlayer, index: number) => {
-          p.hand = shuffled.slice(
-            index * game.round,
-            (index + 1) * game.round
-          );
+          p.hand = shuffled.slice(index * game.round, (index + 1) * game.round);
         });
 
         // Flip new trump card
         const trumpCard = shuffled[game.players.length * game.round];
-        const remainingDeck = shuffled.slice(game.players.length * game.round + 1);
+        const remainingDeck = shuffled.slice(
+          game.players.length * game.round + 1,
+        );
 
         game.deck = remainingDeck;
         game.trumpCard = trumpCard;
@@ -257,7 +257,7 @@ export async function POST(req: NextRequest) {
   } catch (error) {
     return NextResponse.json(
       { error: "Something went wrong" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

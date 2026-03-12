@@ -190,19 +190,20 @@ export default function LobbyPage() {
 
   return (
     <div className="relative flex min-h-screen bg-[#0a0a0f] overflow-hidden">
-
       {/* Ambient background orbs */}
       <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-purple-900/20 rounded-full blur-3xl pointer-events-none" />
       <div className="absolute bottom-1/4 right-1/4 w-80 h-80 bg-indigo-900/20 rounded-full blur-3xl pointer-events-none" />
 
       <div className="relative z-10 flex flex-col items-center justify-center w-full gap-8 px-4">
-
         {/* Header */}
         <div className="flex flex-col items-center gap-2">
           <span className="text-5xl">🧙</span>
           <h1
             className="text-3xl font-bold tracking-widest uppercase text-transparent bg-clip-text"
-            style={{ backgroundImage: "linear-gradient(to right, #c9a84c, #f0d080, #c9a84c)" }}
+            style={{
+              backgroundImage:
+                "linear-gradient(to right, #c9a84c, #f0d080, #c9a84c)",
+            }}
           >
             Game Lobby
           </h1>
@@ -211,19 +212,23 @@ export default function LobbyPage() {
         {!game ? (
           // Pre-game — create or join
           <div className="flex flex-col items-center gap-6 w-full max-w-sm">
-
             <Button
               onClick={handleCreate}
               disabled={loading}
               className="w-full h-12 rounded-xl font-semibold tracking-widest uppercase text-sm text-[#0a0a0f] cursor-pointer"
-              style={{ background: "linear-gradient(to right, #c9a84c, #f0d080, #c9a84c)" }}
+              style={{
+                background:
+                  "linear-gradient(to right, #c9a84c, #f0d080, #c9a84c)",
+              }}
             >
               {loading ? "Creating..." : "Create Game"}
             </Button>
 
             <div className="flex items-center gap-3 w-full">
               <div className="flex-1 h-px bg-white/10" />
-              <span className="text-white/30 text-xs tracking-widest uppercase">or</span>
+              <span className="text-white/30 text-xs tracking-widest uppercase">
+                or
+              </span>
               <div className="flex-1 h-px bg-white/10" />
             </div>
 
@@ -245,21 +250,25 @@ export default function LobbyPage() {
             </div>
 
             {error && (
-              <p className="text-red-400 text-xs text-center tracking-wide">{error}</p>
+              <p className="text-red-400 text-xs text-center tracking-wide">
+                {error}
+              </p>
             )}
-
           </div>
-
         ) : (
           // In room — waiting for players
           <div className="flex flex-col items-center gap-6 w-full max-w-sm">
-
             {/* Room code */}
             <div className="flex flex-col items-center gap-1">
-              <p className="text-white/30 text-xs tracking-widest uppercase">Room Code</p>
+              <p className="text-white/30 text-xs tracking-widest uppercase">
+                Room Code
+              </p>
               <p
                 className="text-4xl font-bold tracking-widest text-transparent bg-clip-text"
-                style={{ backgroundImage: "linear-gradient(to right, #c9a84c, #f0d080, #c9a84c)" }}
+                style={{
+                  backgroundImage:
+                    "linear-gradient(to right, #c9a84c, #f0d080, #c9a84c)",
+                }}
               >
                 {game.code}
               </p>
@@ -277,7 +286,10 @@ export default function LobbyPage() {
               </div>
               <div className="flex flex-col divide-y divide-white/5">
                 {game.players.map((player) => (
-                  <div key={player.userId} className="flex items-center gap-3 px-4 py-3">
+                  <div
+                    key={player.userId}
+                    className="flex items-center gap-3 px-4 py-3"
+                  >
                     <div className="w-7 h-7 rounded-full bg-white/10 flex items-center justify-center text-xs text-white/60 uppercase font-bold">
                       {player.username[0]}
                     </div>
@@ -300,11 +312,16 @@ export default function LobbyPage() {
                 onClick={handleStart}
                 disabled={game.players.length < 3 || loading}
                 className="w-full h-12 rounded-xl font-semibold tracking-widest uppercase text-sm text-[#0a0a0f] disabled:opacity-40 cursor-pointer"
-                style={{ background: "linear-gradient(to right, #c9a84c, #f0d080, #c9a84c)" }}
+                style={{
+                  background:
+                    "linear-gradient(to right, #c9a84c, #f0d080, #c9a84c)",
+                }}
               >
                 {game.players.length < 3
                   ? `Need ${3 - game.players.length} more player${3 - game.players.length > 1 ? "s" : ""}`
-                  : loading ? "Starting..." : "Start Game"}
+                  : loading
+                    ? "Starting..."
+                    : "Start Game"}
               </Button>
             ) : (
               <p className="text-white/30 text-xs tracking-widest uppercase">
@@ -322,12 +339,12 @@ export default function LobbyPage() {
             </Button>
 
             {error && (
-              <p className="text-red-400 text-xs text-center tracking-wide">{error}</p>
+              <p className="text-red-400 text-xs text-center tracking-wide">
+                {error}
+              </p>
             )}
-
           </div>
         )}
-
       </div>
     </div>
   );

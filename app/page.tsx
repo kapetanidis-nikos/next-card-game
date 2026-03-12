@@ -42,31 +42,31 @@ export default function HomePage() {
   }, []);
 
   useEffect(() => {
-  // Fetch the initial users list on mount
-  const fetchUsers = async () => {
-    const res = await fetch("/api/users");
-    const data = await res.json();
-    setUsers(data.users);
-  };
-  fetchUsers();
+    // Fetch the initial users list on mount
+    const fetchUsers = async () => {
+      const res = await fetch("/api/users");
+      const data = await res.json();
+      setUsers(data.users);
+    };
+    fetchUsers();
 
-  // Subscribe to the users channel
-  const channel = pusherClient.subscribe("users-channel");
+    // Subscribe to the users channel
+    const channel = pusherClient.subscribe("users-channel");
 
-  // When a new user logs in, add them to the list if not already there
-  channel.bind("user-logged-in", (data: { user: User }) => {
-    setUsers((prev) => {
-      const exists = prev.find((u) => u._id === data.user._id);
-      if (exists) return prev;
-      return [...prev, data.user];
+    // When a new user logs in, add them to the list if not already there
+    channel.bind("user-logged-in", (data: { user: User }) => {
+      setUsers((prev) => {
+        const exists = prev.find((u) => u._id === data.user._id);
+        if (exists) return prev;
+        return [...prev, data.user];
+      });
     });
-  });
 
-  // Unsubscribe when the component unmounts
-  return () => {
-    pusherClient.unsubscribe("users-channel");
-  };
-}, []);
+    // Unsubscribe when the component unmounts
+    return () => {
+      pusherClient.unsubscribe("users-channel");
+    };
+  }, []);
 
   const handleEnter = () => {
     if (currentUser) {
@@ -78,7 +78,6 @@ export default function HomePage() {
 
   return (
     <div className="relative flex min-h-screen bg-[#0a0a0f] overflow-hidden">
-
       {/* Ambient background orbs */}
       <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-purple-900/20 rounded-full blur-3xl pointer-events-none" />
       <div className="absolute bottom-1/4 right-1/4 w-80 h-80 bg-indigo-900/20 rounded-full blur-3xl pointer-events-none" />
@@ -102,7 +101,10 @@ export default function HomePage() {
         <div className="px-6 py-6 border-b border-white/10">
           <h2
             className="text-sm font-bold tracking-widest uppercase text-transparent bg-clip-text"
-            style={{ backgroundImage: "linear-gradient(to right, #c9a84c, #f0d080, #c9a84c)" }}
+            style={{
+              backgroundImage:
+                "linear-gradient(to right, #c9a84c, #f0d080, #c9a84c)",
+            }}
           >
             Travellers
           </h2>
@@ -118,7 +120,9 @@ export default function HomePage() {
             <div
               key={user._id}
               className={`flex items-center gap-3 px-3 py-2 rounded-lg ${
-                currentUser?._id === user._id ? "bg-white/10" : "hover:bg-white/5"
+                currentUser?._id === user._id
+                  ? "bg-white/10"
+                  : "hover:bg-white/5"
               } transition-colors duration-150`}
             >
               <div className="w-7 h-7 rounded-full bg-white/10 flex items-center justify-center text-xs text-white/60 uppercase font-bold flex-shrink-0">
@@ -140,7 +144,10 @@ export default function HomePage() {
         <span className="text-7xl">🧙</span>
         <h1
           className="text-5xl font-bold tracking-widest uppercase text-transparent bg-clip-text"
-          style={{ backgroundImage: "linear-gradient(to right, #c9a84c, #f0d080, #c9a84c)" }}
+          style={{
+            backgroundImage:
+              "linear-gradient(to right, #c9a84c, #f0d080, #c9a84c)",
+          }}
         >
           Wizard
         </h1>
@@ -151,14 +158,17 @@ export default function HomePage() {
         <Button
           onClick={handleEnter}
           className="mt-4 h-12 px-10 rounded-xl font-semibold tracking-widest uppercase text-sm text-[#0a0a0f] transition-all duration-200 cursor-pointer"
-          style={{ background: "linear-gradient(to right, #c9a84c, #f0d080, #c9a84c)" }}
+          style={{
+            background: "linear-gradient(to right, #c9a84c, #f0d080, #c9a84c)",
+          }}
         >
           {currentUser ? "Enter Lobby" : "Login to Play"}
         </Button>
 
         {currentUser && (
           <p className="text-white/30 text-xs tracking-widest">
-            Logged in as <span className="text-yellow-500/70">{currentUser.username}</span>
+            Logged in as{" "}
+            <span className="text-yellow-500/70">{currentUser.username}</span>
           </p>
         )}
       </main>
@@ -176,7 +186,6 @@ export default function HomePage() {
           <p className="text-sm tracking-wide">{toast.message}</p>
         </div>
       )}
-
     </div>
   );
 }

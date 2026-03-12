@@ -7,7 +7,10 @@ if (!MONGODB_URI) {
 }
 
 // Use a global cache to preserve the connection across hot reloads in dev
-let cached = global.mongoose as { conn: typeof mongoose | null; promise: Promise<typeof mongoose> | null };
+let cached = global.mongoose as {
+  conn: typeof mongoose | null;
+  promise: Promise<typeof mongoose> | null;
+};
 
 if (!cached) {
   cached = global.mongoose = { conn: null, promise: null };

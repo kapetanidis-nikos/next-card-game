@@ -15,7 +15,7 @@ export async function POST(req: NextRequest) {
     if (!userId || !username) {
       return NextResponse.json(
         { error: "userId and username are required" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -35,19 +35,26 @@ export async function POST(req: NextRequest) {
       status: "waiting",
       hostId: userId,
       totalRounds: 0, // will be calculated when game starts based on player count
-      players: [{ userId, username, hand: [], bid: null, score: 0, tricksWon: 0 }],
+      players: [
+        { userId, username, hand: [], bid: null, score: 0, tricksWon: 0 },
+      ],
     });
 
     // Notify all connected clients that a new game is available
     await pusher.trigger("lobby-channel", "game-created", {
-      game: { _id: game._id, code: game.code, players: game.players, hostId: game.hostId },
+      game: {
+        _id: game._id,
+        code: game.code,
+        players: game.players,
+        hostId: game.hostId,
+      },
     });
 
     return NextResponse.json({ game }, { status: 201 });
   } catch (error) {
     return NextResponse.json(
       { error: "Something went wrong" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

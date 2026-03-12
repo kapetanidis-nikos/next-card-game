@@ -109,7 +109,11 @@ const CardComponent = ({
       `}
     >
       <span className="text-xs absolute top-1 left-2 opacity-70">
-        {card.color ? card.color[0].toUpperCase() : card.type === "wizard" ? "W" : "J"}
+        {card.color
+          ? card.color[0].toUpperCase()
+          : card.type === "wizard"
+            ? "W"
+            : "J"}
       </span>
       <span>{getCardLabel()}</span>
     </button>
@@ -162,8 +166,12 @@ export default function WizardGamePage() {
     channel.bind("trump-selected", (data: { trumpColor: string }) => {
       setGame((prev) =>
         prev
-          ? { ...prev, trumpColor: data.trumpColor as Game["trumpColor"], status: "in_progress" }
-          : prev
+          ? {
+              ...prev,
+              trumpColor: data.trumpColor as Game["trumpColor"],
+              status: "in_progress",
+            }
+          : prev,
       );
     });
 
@@ -173,9 +181,9 @@ export default function WizardGamePage() {
     });
 
     channel.bind("game-deleted", (data: { reason: string }) => {
-    alert(data.reason);
-    router.push("/");
-   });
+      alert(data.reason);
+      router.push("/");
+    });
 
     // Game finished
     channel.bind("game-finished", (data: { game: Game }) => {
@@ -189,7 +197,7 @@ export default function WizardGamePage() {
 
   // ---- Handlers ----
 
-    const handleLeave = async () => {
+  const handleLeave = async () => {
     if (!currentUser || !game) return;
     setLoading(true);
 
@@ -311,7 +319,6 @@ export default function WizardGamePage() {
 
   return (
     <div className="relative flex flex-col min-h-screen bg-[#0a0a0f] overflow-hidden">
-
       {/* Ambient orbs */}
       <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-purple-900/20 rounded-full blur-3xl pointer-events-none" />
       <div className="absolute bottom-1/4 right-1/4 w-80 h-80 bg-indigo-900/20 rounded-full blur-3xl pointer-events-none" />
@@ -332,12 +339,14 @@ export default function WizardGamePage() {
 
         {/* Trump card info */}
         <div className="flex items-center gap-3">
-          <p className="text-white/30 text-xs tracking-widest uppercase">Trump</p>
-          {game.trumpCard && (
-            <CardComponent card={game.trumpCard} />
-          )}
+          <p className="text-white/30 text-xs tracking-widest uppercase">
+            Trump
+          </p>
+          {game.trumpCard && <CardComponent card={game.trumpCard} />}
           {game.trumpColor && (
-            <div className={`w-4 h-4 rounded-full ${colorMap[game.trumpColor]}`} />
+            <div
+              className={`w-4 h-4 rounded-full ${colorMap[game.trumpColor]}`}
+            />
           )}
           {!game.trumpColor && game.status !== "selecting_trump" && (
             <p className="text-white/30 text-xs">No trump</p>
@@ -346,10 +355,11 @@ export default function WizardGamePage() {
       </div>
 
       <div className="relative z-10 flex flex-1 gap-4 p-4">
-
         {/* Left sidebar — scoreboard */}
         <aside className="w-48 flex flex-col gap-2">
-          <p className="text-white/30 text-xs tracking-widest uppercase mb-2">Scoreboard</p>
+          <p className="text-white/30 text-xs tracking-widest uppercase mb-2">
+            Scoreboard
+          </p>
           {game.players.map((player) => (
             <div
               key={player.userId}
@@ -360,31 +370,34 @@ export default function WizardGamePage() {
               }`}
             >
               <div className="flex items-center justify-between">
-                <span className="text-white/70 text-xs truncate">{player.username}</span>
+                <span className="text-white/70 text-xs truncate">
+                  {player.username}
+                </span>
                 {currentPlayer?.userId === player.userId && (
                   <span className="text-yellow-500/70 text-xs">▶</span>
                 )}
               </div>
               <div className="flex items-center justify-between">
-                <span className="text-white/30 text-xs">Score: {player.score}</span>
+                <span className="text-white/30 text-xs">
+                  Score: {player.score}
+                </span>
                 <span className="text-white/30 text-xs">
                   Bid: {player.bid ?? "—"} | Won: {player.tricksWon}
                 </span>
               </div>
             </div>
           ))}
-        <Button
-          onClick={handleLeave}
-          disabled={loading}
-          className="w-full h-12 rounded-xl font-semibold tracking-widest uppercase text-sm text-red-400 border border-red-500/20 bg-red-500/5 hover:bg-red-500/10 cursor-pointer"
-        >
-          Leave Game
-        </Button>
+          <Button
+            onClick={handleLeave}
+            disabled={loading}
+            className="w-full h-12 rounded-xl font-semibold tracking-widest uppercase text-sm text-red-400 border border-red-500/20 bg-red-500/5 hover:bg-red-500/10 cursor-pointer"
+          >
+            Leave Game
+          </Button>
         </aside>
 
         {/* Main area */}
         <main className="flex flex-1 flex-col items-center gap-6">
-
           {/* Trump selection — host picks color when Wizard is flipped */}
           {game.status === "selecting_trump" && (
             <div className="flex flex-col items-center gap-4 p-6 rounded-xl border border-white/10 bg-white/5 backdrop-blur-md">
@@ -392,7 +405,10 @@ export default function WizardGamePage() {
                 <>
                   <p
                     className="text-lg font-bold tracking-widest uppercase text-transparent bg-clip-text"
-                    style={{ backgroundImage: "linear-gradient(to right, #c9a84c, #f0d080, #c9a84c)" }}
+                    style={{
+                      backgroundImage:
+                        "linear-gradient(to right, #c9a84c, #f0d080, #c9a84c)",
+                    }}
                   >
                     A Wizard was flipped! Pick the trump color
                   </p>
@@ -421,7 +437,10 @@ export default function WizardGamePage() {
             <div className="flex flex-col items-center gap-4 p-6 rounded-xl border border-white/10 bg-white/5 backdrop-blur-md w-full max-w-md">
               <p
                 className="text-lg font-bold tracking-widest uppercase text-transparent bg-clip-text"
-                style={{ backgroundImage: "linear-gradient(to right, #c9a84c, #f0d080, #c9a84c)" }}
+                style={{
+                  backgroundImage:
+                    "linear-gradient(to right, #c9a84c, #f0d080, #c9a84c)",
+                }}
               >
                 Place your bid
               </p>
@@ -429,17 +448,19 @@ export default function WizardGamePage() {
                 How many tricks will you win this round?
               </p>
               <div className="flex flex-wrap gap-2 justify-center">
-                {Array.from({ length: game.round + 1 }, (_, i) => i).map((amount) => (
-                  <button
-                    key={amount}
-                    onClick={() => handleBid(amount)}
-                    disabled={loading}
-                    className={`w-10 h-10 rounded-lg border text-white/70 text-sm font-bold transition-all cursor-pointer
+                {Array.from({ length: game.round + 1 }, (_, i) => i).map(
+                  (amount) => (
+                    <button
+                      key={amount}
+                      onClick={() => handleBid(amount)}
+                      disabled={loading}
+                      className={`w-10 h-10 rounded-lg border text-white/70 text-sm font-bold transition-all cursor-pointer
                       ${bid === amount ? "border-yellow-500 bg-yellow-500/20" : "border-white/10 bg-white/5 hover:bg-white/10"}`}
-                  >
-                    {amount}
-                  </button>
-                ))}
+                    >
+                      {amount}
+                    </button>
+                  ),
+                )}
               </div>
             </div>
           )}
@@ -455,15 +476,21 @@ export default function WizardGamePage() {
           {/* Current trick */}
           {allBidsPlaced && game.status === "in_progress" && (
             <div className="flex flex-col items-center gap-3 w-full">
-              <p className="text-white/30 text-xs tracking-widest uppercase">Current Trick</p>
+              <p className="text-white/30 text-xs tracking-widest uppercase">
+                Current Trick
+              </p>
               <div className="flex gap-4 flex-wrap justify-center">
                 {game.currentTrick.length === 0 ? (
-                  <p className="text-white/20 text-xs tracking-wide">No cards played yet</p>
+                  <p className="text-white/20 text-xs tracking-wide">
+                    No cards played yet
+                  </p>
                 ) : (
                   game.currentTrick.map((trickCard, i) => (
                     <div key={i} className="flex flex-col items-center gap-1">
                       <CardComponent card={trickCard.card} />
-                      <span className="text-white/40 text-xs">{trickCard.username}</span>
+                      <span className="text-white/40 text-xs">
+                        {trickCard.username}
+                      </span>
                     </div>
                   ))
                 )}
@@ -482,7 +509,10 @@ export default function WizardGamePage() {
             <div className="flex flex-col items-center gap-4 p-6 rounded-xl border border-yellow-500/20 bg-yellow-500/5">
               <p
                 className="text-2xl font-bold tracking-widest uppercase text-transparent bg-clip-text"
-                style={{ backgroundImage: "linear-gradient(to right, #c9a84c, #f0d080, #c9a84c)" }}
+                style={{
+                  backgroundImage:
+                    "linear-gradient(to right, #c9a84c, #f0d080, #c9a84c)",
+                }}
               >
                 Game Over!
               </p>
@@ -490,7 +520,10 @@ export default function WizardGamePage() {
                 {[...game.players]
                   .sort((a, b) => b.score - a.score)
                   .map((player, index) => (
-                    <div key={player.userId} className="flex items-center justify-between px-4 py-2 rounded-lg bg-white/5 border border-white/10">
+                    <div
+                      key={player.userId}
+                      className="flex items-center justify-between px-4 py-2 rounded-lg bg-white/5 border border-white/10"
+                    >
                       <span className="text-white/70 text-sm">
                         {index + 1}. {player.username}
                       </span>
@@ -503,30 +536,38 @@ export default function WizardGamePage() {
               <Button
                 onClick={() => router.push("/")}
                 className="mt-2 h-10 px-8 rounded-xl font-semibold tracking-widest uppercase text-sm text-[#0a0a0f] cursor-pointer"
-                style={{ background: "linear-gradient(to right, #c9a84c, #f0d080, #c9a84c)" }}
+                style={{
+                  background:
+                    "linear-gradient(to right, #c9a84c, #f0d080, #c9a84c)",
+                }}
               >
                 Back to Home
               </Button>
             </div>
           )}
-
         </main>
       </div>
 
       {/* My hand — fixed at the bottom */}
       <div className="relative z-10 border-t border-white/10 bg-black/40 backdrop-blur-md px-6 py-4">
         <div className="flex flex-col items-center gap-3">
-          <p className="text-white/30 text-xs tracking-widest uppercase">Your Hand</p>
+          <p className="text-white/30 text-xs tracking-widest uppercase">
+            Your Hand
+          </p>
           <div className="flex gap-3 flex-wrap justify-center">
             {me?.hand.map((card, i) => (
               <CardComponent
                 key={i}
                 card={card}
-                onClick={allBidsPlaced && isMyTurn && game.status === "in_progress"
-                  ? () => setSelectedCard(card)
-                  : undefined}
+                onClick={
+                  allBidsPlaced && isMyTurn && game.status === "in_progress"
+                    ? () => setSelectedCard(card)
+                    : undefined
+                }
                 selected={selectedCard?.cardId === card.cardId}
-                disabled={!allBidsPlaced || !isMyTurn || game.status !== "in_progress"}
+                disabled={
+                  !allBidsPlaced || !isMyTurn || game.status !== "in_progress"
+                }
               />
             ))}
           </div>
@@ -536,7 +577,10 @@ export default function WizardGamePage() {
               onClick={handlePlayCard}
               disabled={loading}
               className="h-10 px-8 rounded-xl font-semibold tracking-widest uppercase text-sm text-[#0a0a0f] cursor-pointer"
-              style={{ background: "linear-gradient(to right, #c9a84c, #f0d080, #c9a84c)" }}
+              style={{
+                background:
+                  "linear-gradient(to right, #c9a84c, #f0d080, #c9a84c)",
+              }}
             >
               Play Card
             </Button>
@@ -551,7 +595,6 @@ export default function WizardGamePage() {
           <p className="text-sm tracking-wide text-red-300">{error}</p>
         </div>
       )}
-
     </div>
   );
 }

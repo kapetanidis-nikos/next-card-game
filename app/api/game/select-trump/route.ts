@@ -12,14 +12,14 @@ export async function POST(req: NextRequest) {
     if (!gameId || !userId || !color) {
       return NextResponse.json(
         { error: "gameId, userId and color are required" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
     if (!validColors.includes(color)) {
       return NextResponse.json(
         { error: "Invalid color. Must be red, blue, green or yellow" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -36,14 +36,14 @@ export async function POST(req: NextRequest) {
     if (game.hostId.toString() !== userId) {
       return NextResponse.json(
         { error: "Only the host can select the trump color" },
-        { status: 403 }
+        { status: 403 },
       );
     }
 
     if (game.status !== "selecting_trump") {
       return NextResponse.json(
         { error: "Game is not in trump selection phase" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -61,7 +61,7 @@ export async function POST(req: NextRequest) {
   } catch (error) {
     return NextResponse.json(
       { error: "Something went wrong" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

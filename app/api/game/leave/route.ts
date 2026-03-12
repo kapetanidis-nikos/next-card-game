@@ -10,7 +10,7 @@ export async function POST(req: NextRequest) {
     if (!gameId || !userId) {
       return NextResponse.json(
         { error: "gameId and userId are required" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -26,7 +26,11 @@ export async function POST(req: NextRequest) {
     const isHost = game.hostId.toString() === userId;
 
     // If host leaves or player leaves mid-game — delete the game entirely
-    if (isHost || game.status === "in_progress" || game.status === "selecting_trump") {
+    if (
+      isHost ||
+      game.status === "in_progress" ||
+      game.status === "selecting_trump"
+    ) {
       await GameSession.findByIdAndDelete(gameId);
 
       // Notify all players the game was deleted
@@ -39,7 +43,7 @@ export async function POST(req: NextRequest) {
 
     // Player leaves while waiting in lobby — just remove them
     game.players = game.players.filter(
-      (p: IPlayer) => p.userId.toString() !== userId
+      (p: IPlayer) => p.userId.toString() !== userId,
     );
     await game.save();
 
@@ -53,7 +57,7 @@ export async function POST(req: NextRequest) {
   } catch (error) {
     return NextResponse.json(
       { error: "Something went wrong" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

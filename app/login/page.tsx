@@ -55,7 +55,6 @@ export default function LoginPage() {
 
   return (
     <div className="relative flex flex-col items-center justify-center min-h-screen bg-[#0a0a0f] overflow-hidden">
-
       {/* Ambient background orbs */}
       <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-purple-900/20 rounded-full blur-3xl pointer-events-none" />
       <div className="absolute bottom-1/4 right-1/4 w-80 h-80 bg-indigo-900/20 rounded-full blur-3xl pointer-events-none" />
@@ -76,17 +75,21 @@ export default function LoginPage() {
 
       {/* Card */}
       <div className="relative z-10 flex flex-col items-center gap-8 w-full max-w-sm px-8 py-10 rounded-2xl border border-white/10 bg-white/5 backdrop-blur-md shadow-2xl">
-
         {/* Wizard hat icon */}
         <div className="flex flex-col items-center gap-2">
           <span className="text-5xl">🧙</span>
           <h1
             className="text-3xl font-bold tracking-widest uppercase text-transparent bg-clip-text"
-            style={{ backgroundImage: "linear-gradient(to right, #c9a84c, #f0d080, #c9a84c)" }}
+            style={{
+              backgroundImage:
+                "linear-gradient(to right, #c9a84c, #f0d080, #c9a84c)",
+            }}
           >
             Wizard
           </h1>
-          <p className="text-white/40 text-sm tracking-widest uppercase">Enter your name, traveller</p>
+          <p className="text-white/40 text-sm tracking-widest uppercase">
+            Enter your name, traveller
+          </p>
         </div>
 
         {/* Input + button */}
@@ -100,19 +103,23 @@ export default function LoginPage() {
           />
 
           {error && (
-            <p className="text-red-400 text-xs text-center tracking-wide">{error}</p>
+            <p className="text-red-400 text-xs text-center tracking-wide">
+              {error}
+            </p>
           )}
 
           <Button
             onClick={handleLogin}
             disabled={loading || !username.trim()}
             className="w-full h-12 rounded-xl font-semibold tracking-widest uppercase text-sm text-[#0a0a0f] disabled:opacity-40 transition-all duration-200 cursor-pointer"
-            style={{ background: "linear-gradient(to right, #c9a84c, #f0d080, #c9a84c)" }}
+            style={{
+              background:
+                "linear-gradient(to right, #c9a84c, #f0d080, #c9a84c)",
+            }}
           >
             {loading ? "Entering..." : "Enter the Game"}
           </Button>
         </div>
-
       </div>
 
       {/* Toast notification */}
@@ -129,7 +136,6 @@ export default function LoginPage() {
           <p className="text-sm tracking-wide">{toast.message}</p>
         </div>
       )}
-
     </div>
   );
 }
