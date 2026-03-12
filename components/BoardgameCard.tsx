@@ -17,6 +17,7 @@ interface BoardgameCardProps {
   duration: string;
   emoji: string;
   underConstruction?: boolean;
+  disabled?: boolean;
   onEnterLobby?: () => void;
 }
 
@@ -27,6 +28,7 @@ export function BoardgameCard({
   duration,
   emoji,
   underConstruction = false,
+  disabled = false,
   onEnterLobby,
 }: BoardgameCardProps) {
   const [expanded, setExpanded] = useState(false);
@@ -79,10 +81,12 @@ export function BoardgameCard({
           ) : (
             <Button
               onClick={onEnterLobby}
-              className="h-9 w-full cursor-pointer rounded-xl text-xs font-semibold tracking-widest text-[#0a0a0f] uppercase transition-all duration-200"
+              disabled={disabled}
+              className="h-9 w-full rounded-xl text-xs font-semibold tracking-widest text-[#0a0a0f] uppercase transition-all duration-200 disabled:cursor-not-allowed disabled:opacity-40"
               style={{
                 background:
                   "linear-gradient(to right, #c9a84c, #f0d080, #c9a84c)",
+                cursor: disabled ? "not-allowed" : "pointer",
               }}
             >
               Enter Lobby

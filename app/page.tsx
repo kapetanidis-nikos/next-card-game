@@ -2,13 +2,56 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import pusherClient from "@/lib/pusher-client";
+
 import { GlowOrb } from "@/components/GlowOrb";
 import { StarField } from "@/components/StarField";
 import { NavBar } from "@/app/components/NavBar";
 import { BoardgameCard } from "@/components/BoardgameCard";
 
-const BOARDGAMES = [
+import { User } from "@/types";
+
+export default function HomePage() {
+  const [currentUser, setCurrentUser] = useState<User | null>(null);
+  const router = useRouter();
+
+  useEffect(() => {
+    const savedUser = localStorage.getItem("user");
+    if (savedUser) setCurrentUser(JSON.parse(savedUser));
+  }, []);
+
+  const handleEnter = () => {
+    router.push("/lobby");
+  };
+
+  return (
+    <div className="relative flex min-h-screen overflow-hidden bg-[#0a0a0f]">
+      <GlowOrb top="25%" left="25%" />
+      <GlowOrb right="25%" bottom="25%" />
+      <StarField />
+
+      <NavBar username={currentUser?.username} />
+
+      <main className="relative z-10 flex flex-1 flex-col items-center pt-24">
+        <div className="mt-8 grid grid-cols-1 gap-4 px-6 pb-10 sm:grid-cols-2 lg:grid-cols-3">
+          <BoardgameCard
+            title="Wizard"
+            description="Bid on tricks and outwit your opponents in this classic card game."
+            players="3–6"
+            duration="45–75 min"
+            emoji="🧙"
+            disabled={!currentUser}
+            onEnterLobby={handleEnter}
+          />
+          {PLACEHOLDER_BOARDGAMES.map((game) => (
+            <BoardgameCard key={game.title} {...game} underConstruction />
+          ))}
+        </div>
+      </main>
+    </div>
+  );
+}
+
+const PLACEHOLDER_BOARDGAMES = [
   {
     title: "Catan",
     description: "Trade, build, and settle the island of Catan.",
@@ -73,78 +116,3 @@ const BOARDGAMES = [
     emoji: "🦜",
   },
 ];
-
-interface User {
-  _id: string;
-  username: string;
-}
-
-interface Toast {
-  message: string;
-  type: "success" | "error";
-}
-
-export default function HomePage() {
-  const [currentUser, setCurrentUser] = useState<User | null>(null);
-  const [toast, setToast] = useState<Toast | null>(null);
-  const router = useRouter();
-
-  const showToast = (message: string, type: "success" | "error") => {
-    setToast({ message, type });
-    setTimeout(() => setToast(null), 3000);
-  };
-
-  useEffect(() => {
-    const raw = localStorage.getItem("toast");
-    if (raw) {
-      const saved = JSON.parse(raw);
-      showToast(saved.message, saved.type);
-      localStorage.removeItem("toast");
-    }
-    const savedUser = localStorage.getItem("user");
-    if (savedUser) setCurrentUser(JSON.parse(savedUser));
-  }, []);
-
-  const handleEnter = () => {
-    router.push(currentUser ? "/lobby" : "/login");
-  };
-
-  return (
-    <div className="relative flex min-h-screen overflow-hidden bg-[#0a0a0f]">
-      <GlowOrb top="25%" left="25%" />
-      <GlowOrb right="25%" bottom="25%" />
-      <StarField />
-
-      <NavBar username={currentUser?.username} />
-
-      <main className="relative z-10 flex flex-1 flex-col items-center pt-24">
-        <div className="mt-8 grid grid-cols-1 gap-4 px-6 pb-10 sm:grid-cols-2 lg:grid-cols-3">
-          <BoardgameCard
-            title="Wizard"
-            description="Bid on tricks and outwit your opponents in this classic card game."
-            players="3–6"
-            duration="45–75 min"
-            emoji="🧙"
-            onEnterLobby={handleEnter}
-          />
-          {BOARDGAMES.map((game) => (
-            <BoardgameCard key={game.title} {...game} underConstruction />
-          ))}
-        </div>
-      </main>
-
-      {toast && (
-        <div
-          className={`fixed right-6 bottom-6 z-50 flex items-center gap-3 rounded-xl border px-5 py-4 shadow-2xl backdrop-blur-md transition-all duration-300 ${
-            toast.type === "success"
-              ? "border-green-500/30 bg-green-950/80 text-green-300"
-              : "border-red-500/30 bg-red-950/80 text-red-300"
-          }`}
-        >
-          <span>{toast.type === "success" ? "✅" : "❌"}</span>
-          <p className="text-sm tracking-wide">{toast.message}</p>
-        </div>
-      )}
-    </div>
-  );
-}
