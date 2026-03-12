@@ -1,6 +1,8 @@
 "use client";
 
-import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
+import { useRouter, usePathname } from "next/navigation";
+import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -9,23 +11,28 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 
-interface NavBarProps {
-  username?: string;
-}
-
-export function NavBar({ username }: NavBarProps) {
+export function NavBar() {
+  const [username, setUsername] = useState<string | undefined>(undefined);
   const router = useRouter();
+  const pathname = usePathname();
+
+  useEffect(() => {
+    const saved = localStorage.getItem("user");
+    if (saved) setUsername(JSON.parse(saved).username);
+    else setUsername(undefined);
+  }, [pathname]);
 
   const handleLogout = () => {
     localStorage.removeItem("user");
+    setUsername(undefined);
     router.push("/login");
   };
 
   return (
     <aside className="border-border bg-card fixed top-0 right-0 left-0 z-20 flex flex-row items-center border-b px-6 py-4 backdrop-blur-md">
-      <span className="text-accent text-lg font-bold tracking-widest uppercase">
+      <Link href="/" className="text-accent hover:bg-accent hover:text-accent-foreground rounded-lg px-2 py-1 text-lg font-bold tracking-widest uppercase transition-colors">
         Next Card Game
-      </span>
+      </Link>
       <div className="ml-auto">
         {username ? (
           <DropdownMenu modal={false}>

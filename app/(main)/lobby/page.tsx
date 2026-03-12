@@ -4,6 +4,13 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import {
+  Card,
+  CardHeader,
+  CardTitle,
+  CardContent,
+  CardFooter,
+} from "@/components/ui/card";
 import pusherClient from "@/lib/pusher-client";
 
 interface Player {
@@ -31,7 +38,6 @@ export default function LobbyPage() {
   const [loading, setLoading] = useState(false);
   const router = useRouter();
 
-  // Redirect to login if not logged in
   useEffect(() => {
     const savedUser = localStorage.getItem("user");
     if (!savedUser) {
@@ -41,29 +47,24 @@ export default function LobbyPage() {
     setCurrentUser(JSON.parse(savedUser));
   }, [router]);
 
-  // Subscribe to game room updates once we have a game
   useEffect(() => {
     if (!game) return;
 
     const channel = pusherClient.subscribe(`game-channel-${game._id}`);
 
-    // Another player joined
     channel.bind("player-joined", (data: { players: Player[] }) => {
       setGame((prev) => (prev ? { ...prev, players: data.players } : prev));
     });
 
-    // A player left the lobby
     channel.bind("player-left", (data: { players: Player[] }) => {
       setGame((prev) => (prev ? { ...prev, players: data.players } : prev));
     });
 
-    // Game was deleted because host left
     channel.bind("game-deleted", (data: { reason: string }) => {
       setGame(null);
       setError(data.reason);
     });
 
-    // Host started the game — redirect all players
     channel.bind("game-started", (data: { roomCode: string }) => {
       router.push(`/wizard/${data.roomCode}`);
     });
@@ -189,29 +190,24 @@ export default function LobbyPage() {
   const isHost = game?.hostId === currentUser?._id;
 
   return (
-    <div className="relative flex min-h-screen overflow-hidden bg-[#0a0a0f]">
-      {/* Ambient background orbs */}
-      <div className="pointer-events-none absolute top-1/4 left-1/4 h-96 w-96 rounded-full bg-purple-900/20 blur-3xl" />
-      <div className="pointer-events-none absolute right-1/4 bottom-1/4 h-80 w-80 rounded-full bg-indigo-900/20 blur-3xl" />
+    <div className="relative z-10 flex w-full flex-col items-center justify-center gap-8 px-4 pt-20">
+      {/* Header */}
+      <div className="flex flex-col items-center gap-2">
+        <span className="text-5xl">🧙</span>
+        <h1
+          className="bg-clip-text text-3xl font-bold tracking-widest text-transparent uppercase"
+          style={{
+            backgroundImage:
+              "linear-gradient(to right, #c9a84c, #f0d080, #c9a84c)",
+          }}
+        >
+          Game Lobby
+        </h1>
+      </div>
 
-      <div className="relative z-10 flex w-full flex-col items-center justify-center gap-8 px-4">
-        {/* Header */}
-        <div className="flex flex-col items-center gap-2">
-          <span className="text-5xl">🧙</span>
-          <h1
-            className="bg-clip-text text-3xl font-bold tracking-widest text-transparent uppercase"
-            style={{
-              backgroundImage:
-                "linear-gradient(to right, #c9a84c, #f0d080, #c9a84c)",
-            }}
-          >
-            Game Lobby
-          </h1>
-        </div>
-
-        {!game ? (
-          // Pre-game — create or join
-          <div className="flex w-full max-w-sm flex-col items-center gap-6">
+      {!game ? (
+        <Card className="w-full max-w-sm border-white/10 bg-white/5 shadow-2xl backdrop-blur-md">
+          <CardContent className="flex flex-col gap-6 pt-6">
             <Button
               onClick={handleCreate}
               disabled={loading}
@@ -232,7 +228,7 @@ export default function LobbyPage() {
               <div className="h-px flex-1 bg-white/10" />
             </div>
 
-            <div className="flex w-full flex-col gap-3">
+            <div className="flex flex-col gap-3">
               <Input
                 placeholder="Enter room code"
                 value={joinCode}
@@ -254,31 +250,30 @@ export default function LobbyPage() {
                 {error}
               </p>
             )}
-          </div>
-        ) : (
-          // In room — waiting for players
-          <div className="flex w-full max-w-sm flex-col items-center gap-6">
-            {/* Room code */}
-            <div className="flex flex-col items-center gap-1">
-              <p className="text-xs tracking-widest text-white/30 uppercase">
-                Room Code
-              </p>
-              <p
-                className="bg-clip-text text-4xl font-bold tracking-widest text-transparent"
-                style={{
-                  backgroundImage:
-                    "linear-gradient(to right, #c9a84c, #f0d080, #c9a84c)",
-                }}
-              >
-                {game.code}
-              </p>
-              <p className="text-xs tracking-wide text-white/20">
-                Share this code with your friends
-              </p>
-            </div>
+          </CardContent>
+        </Card>
+      ) : (
+        <Card className="w-full max-w-sm border-white/10 bg-white/5 shadow-2xl backdrop-blur-md">
+          <CardHeader className="items-center text-center">
+            <p className="text-xs tracking-widest text-white/30 uppercase">
+              Room Code
+            </p>
+            <CardTitle
+              className="bg-clip-text text-4xl font-bold tracking-widest text-transparent"
+              style={{
+                backgroundImage:
+                  "linear-gradient(to right, #c9a84c, #f0d080, #c9a84c)",
+              }}
+            >
+              {game.code}
+            </CardTitle>
+            <p className="text-xs tracking-wide text-white/20">
+              Share this code with your friends
+            </p>
+          </CardHeader>
 
-            {/* Players list */}
-            <div className="w-full overflow-hidden rounded-xl border border-white/10 bg-white/5 backdrop-blur-md">
+          <CardContent className="flex flex-col gap-4">
+            <div className="overflow-hidden rounded-xl border border-white/10 bg-white/5 backdrop-blur-md">
               <div className="border-b border-white/10 px-4 py-3">
                 <p className="text-xs tracking-widest text-white/40 uppercase">
                   Players — {game.players.length} / 6
@@ -306,7 +301,14 @@ export default function LobbyPage() {
               </div>
             </div>
 
-            {/* Start game button — only for host, min 3 players */}
+            {error && (
+              <p className="text-center text-xs tracking-wide text-red-400">
+                {error}
+              </p>
+            )}
+          </CardContent>
+
+          <CardFooter className="flex flex-col gap-3">
             {isHost ? (
               <Button
                 onClick={handleStart}
@@ -329,7 +331,6 @@ export default function LobbyPage() {
               </p>
             )}
 
-            {/* Leave game button */}
             <Button
               onClick={handleLeave}
               disabled={loading}
@@ -337,15 +338,9 @@ export default function LobbyPage() {
             >
               Leave Game
             </Button>
-
-            {error && (
-              <p className="text-center text-xs tracking-wide text-red-400">
-                {error}
-              </p>
-            )}
-          </div>
-        )}
-      </div>
+          </CardFooter>
+        </Card>
+      )}
     </div>
   );
 }

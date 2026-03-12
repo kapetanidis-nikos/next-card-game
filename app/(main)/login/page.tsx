@@ -13,9 +13,6 @@ import {
   CardContent,
   CardFooter,
 } from "@/components/ui/card";
-import { GlowOrb } from "@/components/GlowOrb";
-import { StarField } from "@/components/StarField";
-import { NavBar } from "@/app/components/NavBar";
 
 export default function LoginPage() {
   const [username, setUsername] = useState("");
@@ -51,19 +48,8 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="relative flex min-h-screen flex-col items-center justify-center overflow-hidden bg-[#0a0a0f]">
-      <NavBar />
-
-      <GlowOrb top="25%" left="25%" />
-      <GlowOrb
-        bottom="25%"
-        right="25%"
-        className="h-80 w-80 bg-indigo-900/20"
-      />
-
-      <StarField />
-
-      <Card className="relative z-10 w-full max-w-sm border-white/10 bg-white/5 shadow-2xl backdrop-blur-md">
+    <div className="relative z-10 flex flex-1 flex-col items-center justify-center px-4">
+      <Card className="w-full max-w-sm border-white/10 bg-white/5 shadow-2xl backdrop-blur-md">
         <CardHeader className="items-center text-center">
           <span className="text-5xl">🧙</span>
           <CardTitle

@@ -3,11 +3,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 
-import { GlowOrb } from "@/components/GlowOrb";
-import { StarField } from "@/components/StarField";
-import { NavBar } from "@/app/components/NavBar";
 import { BoardgameCard } from "@/components/BoardgameCard";
-
 import { User } from "@/types";
 
 export default function HomePage() {
@@ -24,30 +20,22 @@ export default function HomePage() {
   };
 
   return (
-    <div className="relative flex min-h-screen overflow-hidden bg-[#0a0a0f]">
-      <GlowOrb top="25%" left="25%" />
-      <GlowOrb right="25%" bottom="25%" />
-      <StarField />
-
-      <NavBar username={currentUser?.username} />
-
-      <main className="relative z-10 flex flex-1 flex-col items-center pt-24">
-        <div className="mt-8 grid grid-cols-1 gap-4 px-6 pb-10 sm:grid-cols-2 lg:grid-cols-3">
-          <BoardgameCard
-            title="Wizard"
-            description="Bid on tricks and outwit your opponents in this classic card game."
-            players="3–6"
-            duration="45–75 min"
-            emoji="🧙"
-            disabled={!currentUser}
-            onEnterLobby={handleEnter}
-          />
-          {PLACEHOLDER_BOARDGAMES.map((game) => (
-            <BoardgameCard key={game.title} {...game} underConstruction />
-          ))}
-        </div>
-      </main>
-    </div>
+    <main className="relative z-10 flex flex-1 flex-col items-center pt-24">
+      <div className="mt-8 grid grid-cols-1 gap-4 px-6 pb-10 sm:grid-cols-2 lg:grid-cols-3">
+        <BoardgameCard
+          title="Wizard"
+          description="Bid on tricks and outwit your opponents in this classic card game."
+          players="3–6"
+          duration="45–75 min"
+          emoji="🧙"
+          disabled={!currentUser}
+          onEnterLobby={handleEnter}
+        />
+        {PLACEHOLDER_BOARDGAMES.map((game) => (
+          <BoardgameCard key={game.title} {...game} underConstruction />
+        ))}
+      </div>
+    </main>
   );
 }
 
