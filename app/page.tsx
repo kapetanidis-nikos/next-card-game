@@ -2,8 +2,77 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { Button } from "@/components/ui/button";
 import pusherClient from "@/lib/pusher-client";
+import { GlowOrb } from "@/components/GlowOrb";
+import { StarField } from "@/components/StarField";
+import { NavBar } from "@/app/components/NavBar";
+import { BoardgameCard } from "@/components/BoardgameCard";
+
+const BOARDGAMES = [
+  {
+    title: "Catan",
+    description: "Trade, build, and settle the island of Catan.",
+    players: "3–4",
+    duration: "60–120 min",
+    emoji: "🏝️",
+  },
+  {
+    title: "Ticket to Ride",
+    description: "Claim railway routes across the map.",
+    players: "2–5",
+    duration: "30–90 min",
+    emoji: "🚂",
+  },
+  {
+    title: "Pandemic",
+    description: "Work together to stop four deadly diseases.",
+    players: "2–4",
+    duration: "45–60 min",
+    emoji: "🦠",
+  },
+  {
+    title: "Carcassonne",
+    description: "Build the medieval landscape tile by tile.",
+    players: "2–5",
+    duration: "30–45 min",
+    emoji: "🏰",
+  },
+  {
+    title: "Codenames",
+    description: "Give one-word clues to identify secret agents.",
+    players: "2–8",
+    duration: "15–30 min",
+    emoji: "🕵️",
+  },
+  {
+    title: "Dominion",
+    description: "Build the most powerful deck to dominate.",
+    players: "2–4",
+    duration: "30 min",
+    emoji: "👑",
+  },
+  {
+    title: "7 Wonders",
+    description: "Lead an ancient civilization to glory.",
+    players: "2–7",
+    duration: "30 min",
+    emoji: "🏛️",
+  },
+  {
+    title: "Azul",
+    description: "Draft tiles to decorate the royal palace.",
+    players: "2–4",
+    duration: "30–45 min",
+    emoji: "🔷",
+  },
+  {
+    title: "Wingspan",
+    description: "Attract birds to your wildlife preserve.",
+    players: "1–5",
+    duration: "40–70 min",
+    emoji: "🦜",
+  },
+];
 
 interface User {
   _id: string;
@@ -25,7 +94,6 @@ export default function HomePage() {
     setTimeout(() => setToast(null), 3000);
   };
 
-  // Read toast from localStorage set by login page
   useEffect(() => {
     const raw = localStorage.getItem("toast");
     if (raw) {
@@ -33,77 +101,38 @@ export default function HomePage() {
       showToast(saved.message, saved.type);
       localStorage.removeItem("toast");
     }
-
     const savedUser = localStorage.getItem("user");
-    if (savedUser) {
-      setCurrentUser(JSON.parse(savedUser));
-    }
+    if (savedUser) setCurrentUser(JSON.parse(savedUser));
   }, []);
 
   const handleEnter = () => {
-    if (currentUser) {
-      router.push("/lobby");
-    } else {
-      router.push("/login");
-    }
+    router.push(currentUser ? "/lobby" : "/login");
   };
 
   return (
     <div className="relative flex min-h-screen overflow-hidden bg-[#0a0a0f]">
-      {/* Ambient background orbs */}
-      <div className="pointer-events-none absolute top-1/4 left-1/4 h-96 w-96 rounded-full bg-purple-900/20 blur-3xl" />
-      <div className="pointer-events-none absolute right-1/4 bottom-1/4 h-80 w-80 rounded-full bg-indigo-900/20 blur-3xl" />
+      <GlowOrb top="25%" left="25%" />
+      <GlowOrb right="25%" bottom="25%" />
+      <StarField />
 
-      {/* Star dots */}
-      <div className="pointer-events-none absolute inset-0">
-        {[...Array(40)].map((_, i) => (
-          <div
-            key={i}
-            className="absolute h-px w-px rounded-full bg-white opacity-40"
-            style={{
-              top: `${Math.random() * 100}%`,
-              left: `${Math.random() * 100}%`,
-            }}
+      <NavBar username={currentUser?.username} />
+
+      <main className="relative z-10 flex flex-1 flex-col items-center pt-24">
+        <div className="mt-8 grid grid-cols-1 gap-4 px-6 pb-10 sm:grid-cols-2 lg:grid-cols-3">
+          <BoardgameCard
+            title="Wizard"
+            description="Bid on tricks and outwit your opponents in this classic card game."
+            players="3–6"
+            duration="45–75 min"
+            emoji="🧙"
+            onEnterLobby={handleEnter}
           />
-        ))}
-      </div>
-
-      {/* Sidebar */}
-      <aside className="border-border bg-card fixed top-0 right-0 left-0 z-10 flex flex-row items-center border-b px-6 py-3 backdrop-blur-md">
-        <span className="text-accent text-lg font-bold tracking-widest uppercase">
-          Next Card Game
-        </span>
-        <span className="text-yellow-500/70">{currentUser?.username}</span>
-      </aside>
-
-      {/* Main content */}
-      <main className="relative z-10 flex flex-1 flex-col items-center justify-center gap-6">
-        <span className="text-7xl">🧙</span>
-        <h1
-          className="bg-clip-text text-5xl font-bold tracking-widest text-transparent uppercase"
-          style={{
-            backgroundImage:
-              "linear-gradient(to right, #c9a84c, #f0d080, #c9a84c)",
-          }}
-        >
-          Wizard
-        </h1>
-        <p className="text-sm tracking-widest text-white/30 uppercase">
-          The card game
-        </p>
-
-        <Button
-          onClick={handleEnter}
-          className="mt-4 h-12 cursor-pointer rounded-xl px-10 text-sm font-semibold tracking-widest text-[#0a0a0f] uppercase transition-all duration-200"
-          style={{
-            background: "linear-gradient(to right, #c9a84c, #f0d080, #c9a84c)",
-          }}
-        >
-          {currentUser ? "Enter Lobby" : "Login to Play"}
-        </Button>
+          {BOARDGAMES.map((game) => (
+            <BoardgameCard key={game.title} {...game} underConstruction />
+          ))}
+        </div>
       </main>
 
-      {/* Toast notification */}
       {toast && (
         <div
           className={`fixed right-6 bottom-6 z-50 flex items-center gap-3 rounded-xl border px-5 py-4 shadow-2xl backdrop-blur-md transition-all duration-300 ${
