@@ -15,7 +15,7 @@ export async function POST(req: NextRequest) {
     if (!userId || !username) {
       return NextResponse.json(
         { error: "userId and username are required" },
-        { status: 400 },
+        { status: 400 }
       );
     }
 
@@ -54,7 +54,7 @@ export async function POST(req: NextRequest) {
   } catch (error) {
     return NextResponse.json(
       { error: "Something went wrong" },
-      { status: 500 },
+      { status: 500 }
     );
   }
 }

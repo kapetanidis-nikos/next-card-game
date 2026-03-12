@@ -10,7 +10,7 @@ export async function POST(req: NextRequest) {
     if (!gameId || !userId || bid === undefined) {
       return NextResponse.json(
         { error: "gameId, userId and bid are required" },
-        { status: 400 },
+        { status: 400 }
       );
     }
 
@@ -26,7 +26,7 @@ export async function POST(req: NextRequest) {
     if (game.status !== "in_progress") {
       return NextResponse.json(
         { error: "Game is not in progress" },
-        { status: 400 },
+        { status: 400 }
       );
     }
 
@@ -35,33 +35,33 @@ export async function POST(req: NextRequest) {
     if (allBidsPlaced) {
       return NextResponse.json(
         { error: "All bids have already been placed" },
-        { status: 400 },
+        { status: 400 }
       );
     }
 
     // Find the player and update their bid
     const playerIndex = game.players.findIndex(
-      (p: IPlayer) => p.userId.toString() === userId,
+      (p: IPlayer) => p.userId.toString() === userId
     );
 
     if (playerIndex === -1) {
       return NextResponse.json(
         { error: "Player not found in this game" },
-        { status: 404 },
+        { status: 404 }
       );
     }
 
     if (game.players[playerIndex].bid !== null) {
       return NextResponse.json(
         { error: "You have already placed a bid" },
-        { status: 400 },
+        { status: 400 }
       );
     }
 
     if (bid < 0 || bid > game.round) {
       return NextResponse.json(
         { error: `Bid must be between 0 and ${game.round}` },
-        { status: 400 },
+        { status: 400 }
       );
     }
 
@@ -77,7 +77,7 @@ export async function POST(req: NextRequest) {
   } catch (error) {
     return NextResponse.json(
       { error: "Something went wrong" },
-      { status: 500 },
+      { status: 500 }
     );
   }
 }

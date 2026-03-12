@@ -8,7 +8,7 @@ import pusher from "@/lib/pusher";
 
 const determineTrickWinner = (
   trick: { playerId: string; username: string; card: ICardInPlay }[],
-  trumpColor: string | null,
+  trumpColor: string | null
 ): { winnerId: string; winnerUsername: string } => {
   let winnerIndex = 0;
 
@@ -76,7 +76,7 @@ export async function POST(req: NextRequest) {
     if (!gameId || !userId || !card) {
       return NextResponse.json(
         { error: "gameId, userId and card are required" },
-        { status: 400 },
+        { status: 400 }
       );
     }
 
@@ -92,7 +92,7 @@ export async function POST(req: NextRequest) {
     if (game.status !== "in_progress") {
       return NextResponse.json(
         { error: "Game is not in progress" },
-        { status: 400 },
+        { status: 400 }
       );
     }
 
@@ -101,7 +101,7 @@ export async function POST(req: NextRequest) {
     if (currentPlayer.userId.toString() !== userId) {
       return NextResponse.json(
         { error: "It is not your turn" },
-        { status: 400 },
+        { status: 400 }
       );
     }
 
@@ -110,23 +110,23 @@ export async function POST(req: NextRequest) {
     if (!allBidsPlaced) {
       return NextResponse.json(
         { error: "All players must bid before playing" },
-        { status: 400 },
+        { status: 400 }
       );
     }
 
     // Validate the player has the card in their hand
     const playerIndex = game.players.findIndex(
-      (p: IPlayer) => p.userId.toString() === userId,
+      (p: IPlayer) => p.userId.toString() === userId
     );
     const player = game.players[playerIndex];
     const cardIndex = player.hand.findIndex(
-      (c: ICardInPlay) => c.cardId.toString() === card.cardId,
+      (c: ICardInPlay) => c.cardId.toString() === card.cardId
     );
 
     if (cardIndex === -1) {
       return NextResponse.json(
         { error: "You do not have this card" },
-        { status: 400 },
+        { status: 400 }
       );
     }
 
@@ -151,12 +151,12 @@ export async function POST(req: NextRequest) {
           username: tc.username,
           card: tc.card,
         })),
-        game.trumpColor,
+        game.trumpColor
       );
 
       // Update tricks won for the winner
       const winnerIndex = game.players.findIndex(
-        (p: IPlayer) => p.userId.toString() === winnerId,
+        (p: IPlayer) => p.userId.toString() === winnerId
       );
       game.players[winnerIndex].tricksWon += 1;
 
@@ -220,7 +220,7 @@ export async function POST(req: NextRequest) {
         // Flip new trump card
         const trumpCard = shuffled[game.players.length * game.round];
         const remainingDeck = shuffled.slice(
-          game.players.length * game.round + 1,
+          game.players.length * game.round + 1
         );
 
         game.deck = remainingDeck;
@@ -257,7 +257,7 @@ export async function POST(req: NextRequest) {
   } catch (error) {
     return NextResponse.json(
       { error: "Something went wrong" },
-      { status: 500 },
+      { status: 500 }
     );
   }
 }

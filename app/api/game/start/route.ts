@@ -22,7 +22,7 @@ export async function POST(req: NextRequest) {
     if (!gameId || !userId) {
       return NextResponse.json(
         { error: "gameId and userId are required" },
-        { status: 400 },
+        { status: 400 }
       );
     }
 
@@ -39,21 +39,21 @@ export async function POST(req: NextRequest) {
     if (game.hostId.toString() !== userId) {
       return NextResponse.json(
         { error: "Only the host can start the game" },
-        { status: 403 },
+        { status: 403 }
       );
     }
 
     if (game.status !== "waiting") {
       return NextResponse.json(
         { error: "Game has already started" },
-        { status: 400 },
+        { status: 400 }
       );
     }
 
     if (game.players.length < 3) {
       return NextResponse.json(
         { error: "Need at least 3 players to start" },
-        { status: 400 },
+        { status: 400 }
       );
     }
 
@@ -81,7 +81,7 @@ export async function POST(req: NextRequest) {
         bid: player.bid,
         score: player.score,
         tricksWon: player.tricksWon,
-      }),
+      })
     );
 
     // The trump card is the next card after the dealt cards
@@ -126,7 +126,7 @@ export async function POST(req: NextRequest) {
   } catch (error) {
     return NextResponse.json(
       { error: "Something went wrong" },
-      { status: 500 },
+      { status: 500 }
     );
   }
 }

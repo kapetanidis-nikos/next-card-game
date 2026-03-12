@@ -99,16 +99,9 @@ const CardComponent = ({
     <button
       onClick={onClick}
       disabled={disabled}
-      className={`
-        relative w-16 h-24 rounded-xl border-2 flex flex-col items-center justify-center
-        font-bold text-white text-xl transition-all duration-200
-        ${getCardColor()}
-        ${selected ? "scale-110 -translate-y-2 ring-2 ring-yellow-400" : ""}
-        ${!disabled && onClick ? "hover:scale-105 hover:-translate-y-1 cursor-pointer" : "cursor-default"}
-        ${disabled ? "opacity-50" : ""}
-      `}
+      className={`relative flex h-24 w-16 flex-col items-center justify-center rounded-xl border-2 text-xl font-bold text-white transition-all duration-200 ${getCardColor()} ${selected ? "-translate-y-2 scale-110 ring-2 ring-yellow-400" : ""} ${!disabled && onClick ? "cursor-pointer hover:-translate-y-1 hover:scale-105" : "cursor-default"} ${disabled ? "opacity-50" : ""} `}
     >
-      <span className="text-xs absolute top-1 left-2 opacity-70">
+      <span className="absolute top-1 left-2 text-xs opacity-70">
         {card.color
           ? card.color[0].toUpperCase()
           : card.type === "wizard"
@@ -171,7 +164,7 @@ export default function WizardGamePage() {
               trumpColor: data.trumpColor as Game["trumpColor"],
               status: "in_progress",
             }
-          : prev,
+          : prev
       );
     });
 
@@ -300,8 +293,8 @@ export default function WizardGamePage() {
 
   if (!game || !currentUser) {
     return (
-      <div className="flex items-center justify-center min-h-screen bg-[#0a0a0f]">
-        <p className="text-white/30 tracking-widest uppercase text-sm animate-pulse">
+      <div className="flex min-h-screen items-center justify-center bg-[#0a0a0f]">
+        <p className="animate-pulse text-sm tracking-widest text-white/30 uppercase">
           Loading...
         </p>
       </div>
@@ -318,20 +311,20 @@ export default function WizardGamePage() {
   const myBidPlaced = me?.bid !== null;
 
   return (
-    <div className="relative flex flex-col min-h-screen bg-[#0a0a0f] overflow-hidden">
+    <div className="relative flex min-h-screen flex-col overflow-hidden bg-[#0a0a0f]">
       {/* Ambient orbs */}
-      <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-purple-900/20 rounded-full blur-3xl pointer-events-none" />
-      <div className="absolute bottom-1/4 right-1/4 w-80 h-80 bg-indigo-900/20 rounded-full blur-3xl pointer-events-none" />
+      <div className="pointer-events-none absolute top-1/4 left-1/4 h-96 w-96 rounded-full bg-purple-900/20 blur-3xl" />
+      <div className="pointer-events-none absolute right-1/4 bottom-1/4 h-80 w-80 rounded-full bg-indigo-900/20 blur-3xl" />
 
       {/* Header */}
-      <div className="relative z-10 flex items-center justify-between px-6 py-4 border-b border-white/10">
+      <div className="relative z-10 flex items-center justify-between border-b border-white/10 px-6 py-4">
         <div className="flex items-center gap-3">
           <span className="text-2xl">🧙</span>
           <div>
-            <p className="text-white/70 text-sm font-semibold tracking-widest uppercase">
+            <p className="text-sm font-semibold tracking-widest text-white/70 uppercase">
               Round {game.round} / {game.totalRounds}
             </p>
-            <p className="text-white/30 text-xs tracking-widest">
+            <p className="text-xs tracking-widest text-white/30">
               Room: {game.code}
             </p>
           </div>
@@ -339,49 +332,49 @@ export default function WizardGamePage() {
 
         {/* Trump card info */}
         <div className="flex items-center gap-3">
-          <p className="text-white/30 text-xs tracking-widest uppercase">
+          <p className="text-xs tracking-widest text-white/30 uppercase">
             Trump
           </p>
           {game.trumpCard && <CardComponent card={game.trumpCard} />}
           {game.trumpColor && (
             <div
-              className={`w-4 h-4 rounded-full ${colorMap[game.trumpColor]}`}
+              className={`h-4 w-4 rounded-full ${colorMap[game.trumpColor]}`}
             />
           )}
           {!game.trumpColor && game.status !== "selecting_trump" && (
-            <p className="text-white/30 text-xs">No trump</p>
+            <p className="text-xs text-white/30">No trump</p>
           )}
         </div>
       </div>
 
       <div className="relative z-10 flex flex-1 gap-4 p-4">
         {/* Left sidebar — scoreboard */}
-        <aside className="w-48 flex flex-col gap-2">
-          <p className="text-white/30 text-xs tracking-widest uppercase mb-2">
+        <aside className="flex w-48 flex-col gap-2">
+          <p className="mb-2 text-xs tracking-widest text-white/30 uppercase">
             Scoreboard
           </p>
           {game.players.map((player) => (
             <div
               key={player.userId}
-              className={`flex flex-col gap-1 px-3 py-2 rounded-lg border ${
+              className={`flex flex-col gap-1 rounded-lg border px-3 py-2 ${
                 currentPlayer?.userId === player.userId
                   ? "border-yellow-500/40 bg-yellow-500/5"
                   : "border-white/5 bg-white/5"
               }`}
             >
               <div className="flex items-center justify-between">
-                <span className="text-white/70 text-xs truncate">
+                <span className="truncate text-xs text-white/70">
                   {player.username}
                 </span>
                 {currentPlayer?.userId === player.userId && (
-                  <span className="text-yellow-500/70 text-xs">▶</span>
+                  <span className="text-xs text-yellow-500/70">▶</span>
                 )}
               </div>
               <div className="flex items-center justify-between">
-                <span className="text-white/30 text-xs">
+                <span className="text-xs text-white/30">
                   Score: {player.score}
                 </span>
-                <span className="text-white/30 text-xs">
+                <span className="text-xs text-white/30">
                   Bid: {player.bid ?? "—"} | Won: {player.tricksWon}
                 </span>
               </div>
@@ -390,7 +383,7 @@ export default function WizardGamePage() {
           <Button
             onClick={handleLeave}
             disabled={loading}
-            className="w-full h-12 rounded-xl font-semibold tracking-widest uppercase text-sm text-red-400 border border-red-500/20 bg-red-500/5 hover:bg-red-500/10 cursor-pointer"
+            className="h-12 w-full cursor-pointer rounded-xl border border-red-500/20 bg-red-500/5 text-sm font-semibold tracking-widest text-red-400 uppercase hover:bg-red-500/10"
           >
             Leave Game
           </Button>
@@ -400,11 +393,11 @@ export default function WizardGamePage() {
         <main className="flex flex-1 flex-col items-center gap-6">
           {/* Trump selection — host picks color when Wizard is flipped */}
           {game.status === "selecting_trump" && (
-            <div className="flex flex-col items-center gap-4 p-6 rounded-xl border border-white/10 bg-white/5 backdrop-blur-md">
+            <div className="flex flex-col items-center gap-4 rounded-xl border border-white/10 bg-white/5 p-6 backdrop-blur-md">
               {isHost ? (
                 <>
                   <p
-                    className="text-lg font-bold tracking-widest uppercase text-transparent bg-clip-text"
+                    className="bg-clip-text text-lg font-bold tracking-widest text-transparent uppercase"
                     style={{
                       backgroundImage:
                         "linear-gradient(to right, #c9a84c, #f0d080, #c9a84c)",
@@ -418,14 +411,14 @@ export default function WizardGamePage() {
                         key={color}
                         onClick={() => handleSelectTrump(color)}
                         disabled={loading}
-                        className={`w-12 h-12 rounded-full ${colorMap[color]} hover:scale-110 transition-transform cursor-pointer border-2 border-white/20`}
+                        className={`h-12 w-12 rounded-full ${colorMap[color]} cursor-pointer border-2 border-white/20 transition-transform hover:scale-110`}
                         title={colorLabel[color]}
                       />
                     ))}
                   </div>
                 </>
               ) : (
-                <p className="text-white/40 tracking-widest uppercase text-sm animate-pulse">
+                <p className="animate-pulse text-sm tracking-widest text-white/40 uppercase">
                   Waiting for host to pick trump color...
                 </p>
               )}
@@ -434,9 +427,9 @@ export default function WizardGamePage() {
 
           {/* Bidding phase */}
           {isBiddingPhase && !myBidPlaced && (
-            <div className="flex flex-col items-center gap-4 p-6 rounded-xl border border-white/10 bg-white/5 backdrop-blur-md w-full max-w-md">
+            <div className="flex w-full max-w-md flex-col items-center gap-4 rounded-xl border border-white/10 bg-white/5 p-6 backdrop-blur-md">
               <p
-                className="text-lg font-bold tracking-widest uppercase text-transparent bg-clip-text"
+                className="bg-clip-text text-lg font-bold tracking-widest text-transparent uppercase"
                 style={{
                   backgroundImage:
                     "linear-gradient(to right, #c9a84c, #f0d080, #c9a84c)",
@@ -444,30 +437,29 @@ export default function WizardGamePage() {
               >
                 Place your bid
               </p>
-              <p className="text-white/30 text-xs tracking-wide">
+              <p className="text-xs tracking-wide text-white/30">
                 How many tricks will you win this round?
               </p>
-              <div className="flex flex-wrap gap-2 justify-center">
+              <div className="flex flex-wrap justify-center gap-2">
                 {Array.from({ length: game.round + 1 }, (_, i) => i).map(
                   (amount) => (
                     <button
                       key={amount}
                       onClick={() => handleBid(amount)}
                       disabled={loading}
-                      className={`w-10 h-10 rounded-lg border text-white/70 text-sm font-bold transition-all cursor-pointer
-                      ${bid === amount ? "border-yellow-500 bg-yellow-500/20" : "border-white/10 bg-white/5 hover:bg-white/10"}`}
+                      className={`h-10 w-10 cursor-pointer rounded-lg border text-sm font-bold text-white/70 transition-all ${bid === amount ? "border-yellow-500 bg-yellow-500/20" : "border-white/10 bg-white/5 hover:bg-white/10"}`}
                     >
                       {amount}
                     </button>
-                  ),
+                  )
                 )}
               </div>
             </div>
           )}
 
           {isBiddingPhase && myBidPlaced && (
-            <div className="p-4 rounded-xl border border-white/10 bg-white/5">
-              <p className="text-white/40 text-sm tracking-widest uppercase animate-pulse">
+            <div className="rounded-xl border border-white/10 bg-white/5 p-4">
+              <p className="animate-pulse text-sm tracking-widest text-white/40 uppercase">
                 Waiting for other players to bid...
               </p>
             </div>
@@ -475,20 +467,20 @@ export default function WizardGamePage() {
 
           {/* Current trick */}
           {allBidsPlaced && game.status === "in_progress" && (
-            <div className="flex flex-col items-center gap-3 w-full">
-              <p className="text-white/30 text-xs tracking-widest uppercase">
+            <div className="flex w-full flex-col items-center gap-3">
+              <p className="text-xs tracking-widest text-white/30 uppercase">
                 Current Trick
               </p>
-              <div className="flex gap-4 flex-wrap justify-center">
+              <div className="flex flex-wrap justify-center gap-4">
                 {game.currentTrick.length === 0 ? (
-                  <p className="text-white/20 text-xs tracking-wide">
+                  <p className="text-xs tracking-wide text-white/20">
                     No cards played yet
                   </p>
                 ) : (
                   game.currentTrick.map((trickCard, i) => (
                     <div key={i} className="flex flex-col items-center gap-1">
                       <CardComponent card={trickCard.card} />
-                      <span className="text-white/40 text-xs">
+                      <span className="text-xs text-white/40">
                         {trickCard.username}
                       </span>
                     </div>
@@ -497,7 +489,7 @@ export default function WizardGamePage() {
               </div>
 
               {isMyTurn && (
-                <p className="text-yellow-500/70 text-sm tracking-widest uppercase animate-pulse">
+                <p className="animate-pulse text-sm tracking-widest text-yellow-500/70 uppercase">
                   Your turn!
                 </p>
               )}
@@ -506,9 +498,9 @@ export default function WizardGamePage() {
 
           {/* Game finished */}
           {game.status === "finished" && (
-            <div className="flex flex-col items-center gap-4 p-6 rounded-xl border border-yellow-500/20 bg-yellow-500/5">
+            <div className="flex flex-col items-center gap-4 rounded-xl border border-yellow-500/20 bg-yellow-500/5 p-6">
               <p
-                className="text-2xl font-bold tracking-widest uppercase text-transparent bg-clip-text"
+                className="bg-clip-text text-2xl font-bold tracking-widest text-transparent uppercase"
                 style={{
                   backgroundImage:
                     "linear-gradient(to right, #c9a84c, #f0d080, #c9a84c)",
@@ -516,18 +508,18 @@ export default function WizardGamePage() {
               >
                 Game Over!
               </p>
-              <div className="flex flex-col gap-2 w-full">
+              <div className="flex w-full flex-col gap-2">
                 {[...game.players]
                   .sort((a, b) => b.score - a.score)
                   .map((player, index) => (
                     <div
                       key={player.userId}
-                      className="flex items-center justify-between px-4 py-2 rounded-lg bg-white/5 border border-white/10"
+                      className="flex items-center justify-between rounded-lg border border-white/10 bg-white/5 px-4 py-2"
                     >
-                      <span className="text-white/70 text-sm">
+                      <span className="text-sm text-white/70">
                         {index + 1}. {player.username}
                       </span>
-                      <span className="text-yellow-500/70 text-sm font-bold">
+                      <span className="text-sm font-bold text-yellow-500/70">
                         {player.score} pts
                       </span>
                     </div>
@@ -535,7 +527,7 @@ export default function WizardGamePage() {
               </div>
               <Button
                 onClick={() => router.push("/")}
-                className="mt-2 h-10 px-8 rounded-xl font-semibold tracking-widest uppercase text-sm text-[#0a0a0f] cursor-pointer"
+                className="mt-2 h-10 cursor-pointer rounded-xl px-8 text-sm font-semibold tracking-widest text-[#0a0a0f] uppercase"
                 style={{
                   background:
                     "linear-gradient(to right, #c9a84c, #f0d080, #c9a84c)",
@@ -549,12 +541,12 @@ export default function WizardGamePage() {
       </div>
 
       {/* My hand — fixed at the bottom */}
-      <div className="relative z-10 border-t border-white/10 bg-black/40 backdrop-blur-md px-6 py-4">
+      <div className="relative z-10 border-t border-white/10 bg-black/40 px-6 py-4 backdrop-blur-md">
         <div className="flex flex-col items-center gap-3">
-          <p className="text-white/30 text-xs tracking-widest uppercase">
+          <p className="text-xs tracking-widest text-white/30 uppercase">
             Your Hand
           </p>
-          <div className="flex gap-3 flex-wrap justify-center">
+          <div className="flex flex-wrap justify-center gap-3">
             {me?.hand.map((card, i) => (
               <CardComponent
                 key={i}
@@ -576,7 +568,7 @@ export default function WizardGamePage() {
             <Button
               onClick={handlePlayCard}
               disabled={loading}
-              className="h-10 px-8 rounded-xl font-semibold tracking-widest uppercase text-sm text-[#0a0a0f] cursor-pointer"
+              className="h-10 cursor-pointer rounded-xl px-8 text-sm font-semibold tracking-widest text-[#0a0a0f] uppercase"
               style={{
                 background:
                   "linear-gradient(to right, #c9a84c, #f0d080, #c9a84c)",
@@ -590,7 +582,7 @@ export default function WizardGamePage() {
 
       {/* Error toast */}
       {error && (
-        <div className="fixed bottom-6 right-6 z-50 flex items-center gap-3 px-5 py-4 rounded-xl border border-red-500/30 bg-red-950/80 backdrop-blur-md shadow-2xl">
+        <div className="fixed right-6 bottom-6 z-50 flex items-center gap-3 rounded-xl border border-red-500/30 bg-red-950/80 px-5 py-4 shadow-2xl backdrop-blur-md">
           <span>❌</span>
           <p className="text-sm tracking-wide text-red-300">{error}</p>
         </div>

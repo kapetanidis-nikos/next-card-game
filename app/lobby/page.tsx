@@ -189,17 +189,17 @@ export default function LobbyPage() {
   const isHost = game?.hostId === currentUser?._id;
 
   return (
-    <div className="relative flex min-h-screen bg-[#0a0a0f] overflow-hidden">
+    <div className="relative flex min-h-screen overflow-hidden bg-[#0a0a0f]">
       {/* Ambient background orbs */}
-      <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-purple-900/20 rounded-full blur-3xl pointer-events-none" />
-      <div className="absolute bottom-1/4 right-1/4 w-80 h-80 bg-indigo-900/20 rounded-full blur-3xl pointer-events-none" />
+      <div className="pointer-events-none absolute top-1/4 left-1/4 h-96 w-96 rounded-full bg-purple-900/20 blur-3xl" />
+      <div className="pointer-events-none absolute right-1/4 bottom-1/4 h-80 w-80 rounded-full bg-indigo-900/20 blur-3xl" />
 
-      <div className="relative z-10 flex flex-col items-center justify-center w-full gap-8 px-4">
+      <div className="relative z-10 flex w-full flex-col items-center justify-center gap-8 px-4">
         {/* Header */}
         <div className="flex flex-col items-center gap-2">
           <span className="text-5xl">🧙</span>
           <h1
-            className="text-3xl font-bold tracking-widest uppercase text-transparent bg-clip-text"
+            className="bg-clip-text text-3xl font-bold tracking-widest text-transparent uppercase"
             style={{
               backgroundImage:
                 "linear-gradient(to right, #c9a84c, #f0d080, #c9a84c)",
@@ -211,11 +211,11 @@ export default function LobbyPage() {
 
         {!game ? (
           // Pre-game — create or join
-          <div className="flex flex-col items-center gap-6 w-full max-w-sm">
+          <div className="flex w-full max-w-sm flex-col items-center gap-6">
             <Button
               onClick={handleCreate}
               disabled={loading}
-              className="w-full h-12 rounded-xl font-semibold tracking-widest uppercase text-sm text-[#0a0a0f] cursor-pointer"
+              className="h-12 w-full cursor-pointer rounded-xl text-sm font-semibold tracking-widest text-[#0a0a0f] uppercase"
               style={{
                 background:
                   "linear-gradient(to right, #c9a84c, #f0d080, #c9a84c)",
@@ -224,47 +224,47 @@ export default function LobbyPage() {
               {loading ? "Creating..." : "Create Game"}
             </Button>
 
-            <div className="flex items-center gap-3 w-full">
-              <div className="flex-1 h-px bg-white/10" />
-              <span className="text-white/30 text-xs tracking-widest uppercase">
+            <div className="flex w-full items-center gap-3">
+              <div className="h-px flex-1 bg-white/10" />
+              <span className="text-xs tracking-widest text-white/30 uppercase">
                 or
               </span>
-              <div className="flex-1 h-px bg-white/10" />
+              <div className="h-px flex-1 bg-white/10" />
             </div>
 
-            <div className="flex flex-col gap-3 w-full">
+            <div className="flex w-full flex-col gap-3">
               <Input
                 placeholder="Enter room code"
                 value={joinCode}
                 onChange={(e) => setJoinCode(e.target.value.toUpperCase())}
                 onKeyDown={(e) => e.key === "Enter" && handleJoin()}
-                className="bg-white/5 border-white/10 text-white placeholder:text-white/30 rounded-xl h-12 text-center tracking-widest uppercase"
+                className="h-12 rounded-xl border-white/10 bg-white/5 text-center tracking-widest text-white uppercase placeholder:text-white/30"
               />
               <Button
                 onClick={handleJoin}
                 disabled={loading || !joinCode.trim()}
-                className="w-full h-12 rounded-xl font-semibold tracking-widest uppercase text-sm text-white/70 border border-white/10 bg-white/5 hover:bg-white/10 cursor-pointer"
+                className="h-12 w-full cursor-pointer rounded-xl border border-white/10 bg-white/5 text-sm font-semibold tracking-widest text-white/70 uppercase hover:bg-white/10"
               >
                 {loading ? "Joining..." : "Join Game"}
               </Button>
             </div>
 
             {error && (
-              <p className="text-red-400 text-xs text-center tracking-wide">
+              <p className="text-center text-xs tracking-wide text-red-400">
                 {error}
               </p>
             )}
           </div>
         ) : (
           // In room — waiting for players
-          <div className="flex flex-col items-center gap-6 w-full max-w-sm">
+          <div className="flex w-full max-w-sm flex-col items-center gap-6">
             {/* Room code */}
             <div className="flex flex-col items-center gap-1">
-              <p className="text-white/30 text-xs tracking-widest uppercase">
+              <p className="text-xs tracking-widest text-white/30 uppercase">
                 Room Code
               </p>
               <p
-                className="text-4xl font-bold tracking-widest text-transparent bg-clip-text"
+                className="bg-clip-text text-4xl font-bold tracking-widest text-transparent"
                 style={{
                   backgroundImage:
                     "linear-gradient(to right, #c9a84c, #f0d080, #c9a84c)",
@@ -272,15 +272,15 @@ export default function LobbyPage() {
               >
                 {game.code}
               </p>
-              <p className="text-white/20 text-xs tracking-wide">
+              <p className="text-xs tracking-wide text-white/20">
                 Share this code with your friends
               </p>
             </div>
 
             {/* Players list */}
-            <div className="w-full rounded-xl border border-white/10 bg-white/5 backdrop-blur-md overflow-hidden">
-              <div className="px-4 py-3 border-b border-white/10">
-                <p className="text-white/40 text-xs tracking-widest uppercase">
+            <div className="w-full overflow-hidden rounded-xl border border-white/10 bg-white/5 backdrop-blur-md">
+              <div className="border-b border-white/10 px-4 py-3">
+                <p className="text-xs tracking-widest text-white/40 uppercase">
                   Players — {game.players.length} / 6
                 </p>
               </div>
@@ -290,14 +290,14 @@ export default function LobbyPage() {
                     key={player.userId}
                     className="flex items-center gap-3 px-4 py-3"
                   >
-                    <div className="w-7 h-7 rounded-full bg-white/10 flex items-center justify-center text-xs text-white/60 uppercase font-bold">
+                    <div className="flex h-7 w-7 items-center justify-center rounded-full bg-white/10 text-xs font-bold text-white/60 uppercase">
                       {player.username[0]}
                     </div>
-                    <span className="text-white/70 text-sm tracking-wide">
+                    <span className="text-sm tracking-wide text-white/70">
                       {player.username}
                     </span>
                     {player.userId === game.hostId && (
-                      <span className="ml-auto text-yellow-500/70 text-xs tracking-widest uppercase">
+                      <span className="ml-auto text-xs tracking-widest text-yellow-500/70 uppercase">
                         Host
                       </span>
                     )}
@@ -311,7 +311,7 @@ export default function LobbyPage() {
               <Button
                 onClick={handleStart}
                 disabled={game.players.length < 3 || loading}
-                className="w-full h-12 rounded-xl font-semibold tracking-widest uppercase text-sm text-[#0a0a0f] disabled:opacity-40 cursor-pointer"
+                className="h-12 w-full cursor-pointer rounded-xl text-sm font-semibold tracking-widest text-[#0a0a0f] uppercase disabled:opacity-40"
                 style={{
                   background:
                     "linear-gradient(to right, #c9a84c, #f0d080, #c9a84c)",
@@ -324,7 +324,7 @@ export default function LobbyPage() {
                     : "Start Game"}
               </Button>
             ) : (
-              <p className="text-white/30 text-xs tracking-widest uppercase">
+              <p className="text-xs tracking-widest text-white/30 uppercase">
                 Waiting for host to start the game...
               </p>
             )}
@@ -333,13 +333,13 @@ export default function LobbyPage() {
             <Button
               onClick={handleLeave}
               disabled={loading}
-              className="w-full h-12 rounded-xl font-semibold tracking-widest uppercase text-sm text-red-400 border border-red-500/20 bg-red-500/5 hover:bg-red-500/10 cursor-pointer"
+              className="h-12 w-full cursor-pointer rounded-xl border border-red-500/20 bg-red-500/5 text-sm font-semibold tracking-widest text-red-400 uppercase hover:bg-red-500/10"
             >
               Leave Game
             </Button>
 
             {error && (
-              <p className="text-red-400 text-xs text-center tracking-wide">
+              <p className="text-center text-xs tracking-wide text-red-400">
                 {error}
               </p>
             )}

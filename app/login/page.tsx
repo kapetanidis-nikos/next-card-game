@@ -54,17 +54,17 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="relative flex flex-col items-center justify-center min-h-screen bg-[#0a0a0f] overflow-hidden">
+    <div className="relative flex min-h-screen flex-col items-center justify-center overflow-hidden bg-[#0a0a0f]">
       {/* Ambient background orbs */}
-      <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-purple-900/20 rounded-full blur-3xl pointer-events-none" />
-      <div className="absolute bottom-1/4 right-1/4 w-80 h-80 bg-indigo-900/20 rounded-full blur-3xl pointer-events-none" />
+      <div className="pointer-events-none absolute top-1/4 left-1/4 h-96 w-96 rounded-full bg-purple-900/20 blur-3xl" />
+      <div className="pointer-events-none absolute right-1/4 bottom-1/4 h-80 w-80 rounded-full bg-indigo-900/20 blur-3xl" />
 
       {/* Star dots */}
-      <div className="absolute inset-0 pointer-events-none">
+      <div className="pointer-events-none absolute inset-0">
         {[...Array(40)].map((_, i) => (
           <div
             key={i}
-            className="absolute w-px h-px bg-white rounded-full opacity-40"
+            className="absolute h-px w-px rounded-full bg-white opacity-40"
             style={{
               top: `${Math.random() * 100}%`,
               left: `${Math.random() * 100}%`,
@@ -74,12 +74,12 @@ export default function LoginPage() {
       </div>
 
       {/* Card */}
-      <div className="relative z-10 flex flex-col items-center gap-8 w-full max-w-sm px-8 py-10 rounded-2xl border border-white/10 bg-white/5 backdrop-blur-md shadow-2xl">
+      <div className="relative z-10 flex w-full max-w-sm flex-col items-center gap-8 rounded-2xl border border-white/10 bg-white/5 px-8 py-10 shadow-2xl backdrop-blur-md">
         {/* Wizard hat icon */}
         <div className="flex flex-col items-center gap-2">
           <span className="text-5xl">🧙</span>
           <h1
-            className="text-3xl font-bold tracking-widest uppercase text-transparent bg-clip-text"
+            className="bg-clip-text text-3xl font-bold tracking-widest text-transparent uppercase"
             style={{
               backgroundImage:
                 "linear-gradient(to right, #c9a84c, #f0d080, #c9a84c)",
@@ -87,23 +87,23 @@ export default function LoginPage() {
           >
             Wizard
           </h1>
-          <p className="text-white/40 text-sm tracking-widest uppercase">
+          <p className="text-sm tracking-widest text-white/40 uppercase">
             Enter your name, traveller
           </p>
         </div>
 
         {/* Input + button */}
-        <div className="flex flex-col gap-3 w-full">
+        <div className="flex w-full flex-col gap-3">
           <Input
             placeholder="Username"
             value={username}
             onChange={(e) => setUsername(e.target.value)}
             onKeyDown={(e) => e.key === "Enter" && handleLogin()}
-            className="bg-white/5 border-white/10 text-white placeholder:text-white/30 focus:border-yellow-500/50 focus:ring-yellow-500/20 rounded-xl h-12 text-center tracking-widest"
+            className="h-12 rounded-xl border-white/10 bg-white/5 text-center tracking-widest text-white placeholder:text-white/30 focus:border-yellow-500/50 focus:ring-yellow-500/20"
           />
 
           {error && (
-            <p className="text-red-400 text-xs text-center tracking-wide">
+            <p className="text-center text-xs tracking-wide text-red-400">
               {error}
             </p>
           )}
@@ -111,7 +111,7 @@ export default function LoginPage() {
           <Button
             onClick={handleLogin}
             disabled={loading || !username.trim()}
-            className="w-full h-12 rounded-xl font-semibold tracking-widest uppercase text-sm text-[#0a0a0f] disabled:opacity-40 transition-all duration-200 cursor-pointer"
+            className="h-12 w-full cursor-pointer rounded-xl text-sm font-semibold tracking-widest text-[#0a0a0f] uppercase transition-all duration-200 disabled:opacity-40"
             style={{
               background:
                 "linear-gradient(to right, #c9a84c, #f0d080, #c9a84c)",
@@ -126,10 +126,10 @@ export default function LoginPage() {
       {/* ΤODO - How can toast be persistent after redirecting to other page*/}
       {toast && (
         <div
-          className={`fixed bottom-6 right-6 z-50 flex items-center gap-3 px-5 py-4 rounded-xl border backdrop-blur-md shadow-2xl transition-all duration-300 ${
+          className={`fixed right-6 bottom-6 z-50 flex items-center gap-3 rounded-xl border px-5 py-4 shadow-2xl backdrop-blur-md transition-all duration-300 ${
             toast.type === "success"
-              ? "bg-green-950/80 border-green-500/30 text-green-300"
-              : "bg-red-950/80 border-red-500/30 text-red-300"
+              ? "border-green-500/30 bg-green-950/80 text-green-300"
+              : "border-red-500/30 bg-red-950/80 text-red-300"
           }`}
         >
           <span>{toast.type === "success" ? "✅" : "❌"}</span>

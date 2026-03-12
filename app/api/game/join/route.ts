@@ -10,7 +10,7 @@ export async function POST(req: NextRequest) {
     if (!userId || !username || !code) {
       return NextResponse.json(
         { error: "userId, username and code are required" },
-        { status: 400 },
+        { status: 400 }
       );
     }
 
@@ -26,7 +26,7 @@ export async function POST(req: NextRequest) {
     if (game.status !== "waiting") {
       return NextResponse.json(
         { error: "Game has already started" },
-        { status: 400 },
+        { status: 400 }
       );
     }
 
@@ -36,13 +36,13 @@ export async function POST(req: NextRequest) {
 
     // Check if player is already in the game
     const alreadyJoined = game.players.find(
-      (p: IPlayer) => p.userId.toString() === userId,
+      (p: IPlayer) => p.userId.toString() === userId
     );
 
     if (alreadyJoined) {
       return NextResponse.json(
         { error: "You are already in this game" },
-        { status: 400 },
+        { status: 400 }
       );
     }
 
@@ -65,7 +65,7 @@ export async function POST(req: NextRequest) {
   } catch (error) {
     return NextResponse.json(
       { error: "Something went wrong" },
-      { status: 500 },
+      { status: 500 }
     );
   }
 }
