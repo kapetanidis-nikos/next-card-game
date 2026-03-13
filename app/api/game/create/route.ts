@@ -40,7 +40,9 @@ export async function POST(req: NextRequest) {
       ],
     });
 
-    // Notify all connected clients that a new game is available
+    // TODO: "lobby-channel" is never subscribed to on the client, and "game-created"
+    // has no corresponding bind — this trigger is dead code. Either remove it or
+    // implement a subscription in the lobby page to listen for this event.
     await pusher.trigger("lobby-channel", "game-created", {
       game: {
         _id: game._id,
