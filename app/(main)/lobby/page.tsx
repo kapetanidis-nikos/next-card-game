@@ -7,6 +7,7 @@ import GameRoomCard from "./components/GameRoomCard";
 import LobbyHeader from "./components/LobbyHeader";
 import pusherClient from "@/lib/pusher-client";
 import { User } from "@/types";
+import { useRequireAuth } from "@/app/hooks/useRequireAuth";
 interface Player {
   userId: string;
   username: string;
@@ -19,21 +20,12 @@ interface Game {
 }
 
 export default function LobbyPage() {
-  const [currentUser, setCurrentUser] = useState<User | null>(null);
   const [game, setGame] = useState<Game | null>(null);
   const [joinCode, setJoinCode] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const router = useRouter();
-
-  useEffect(() => {
-    const savedUser = localStorage.getItem("user");
-    if (!savedUser) {
-      router.push("/login");
-      return;
-    }
-    setCurrentUser(JSON.parse(savedUser));
-  }, [router]);
+  const user = useRequireAuth();
 
   useEffect(() => {
     if (!game) return;
@@ -63,7 +55,7 @@ export default function LobbyPage() {
   }, [game?._id, router]);
 
   const handleCreate = async () => {
-    if (!currentUser) return;
+    if (!user) return;
     setError("");
     setLoading(true);
 
@@ -72,8 +64,8 @@ export default function LobbyPage() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          userId: currentUser._id,
-          username: currentUser.username,
+          userId: user._id,
+          username: user.username,
         }),
       });
 
@@ -93,7 +85,7 @@ export default function LobbyPage() {
   };
 
   const handleJoin = async () => {
-    if (!currentUser) return;
+    if (!user) return;
     setError("");
     setLoading(true);
 
@@ -102,8 +94,8 @@ export default function LobbyPage() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          userId: currentUser._id,
-          username: currentUser.username,
+          userId: user._id,
+          username: user.username,
           code: joinCode,
         }),
       });
@@ -124,7 +116,7 @@ export default function LobbyPage() {
   };
 
   const handleStart = async () => {
-    if (!currentUser || !game) return;
+    if (!user || !game) return;
     setError("");
     setLoading(true);
 
@@ -134,7 +126,7 @@ export default function LobbyPage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           gameId: game._id,
-          userId: currentUser._id,
+          userId: user._id,
         }),
       });
 
@@ -154,7 +146,7 @@ export default function LobbyPage() {
   };
 
   const handleLeave = async () => {
-    if (!currentUser || !game) return;
+    if (!user || !game) return;
     setLoading(true);
 
     try {
@@ -163,7 +155,7 @@ export default function LobbyPage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           gameId: game._id,
-          userId: currentUser._id,
+          userId: user._id,
         }),
       });
 
@@ -175,7 +167,9 @@ export default function LobbyPage() {
     }
   };
 
-  const isHost = game?.hostId === currentUser?._id;
+  const isHost = game?.hostId === user?._id;
+
+  if (!user) return null;
 
   return (
     <div className="relative z-10 flex w-full flex-col items-center justify-center gap-8 px-4 pt-20">

@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useRouter, useParams } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import pusherClient from "@/lib/pusher-client";
+import { useRequireAuth } from "@/app/hooks/useRequireAuth";
 
 // ---- Types ----
 
@@ -117,7 +118,6 @@ const CardComponent = ({
 
 export default function WizardGamePage() {
   const [game, setGame] = useState<Game | null>(null);
-  const [currentUser, setCurrentUser] = useState<User | null>(null);
   const [selectedCard, setSelectedCard] = useState<CardInPlay | null>(null);
   const [bid, setBid] = useState<number | null>(null);
   const [loading, setLoading] = useState(false);
@@ -125,16 +125,7 @@ export default function WizardGamePage() {
   const router = useRouter();
   const params = useParams();
   const roomCode = params.roomCode as string;
-
-  // Load current user from localStorage
-  useEffect(() => {
-    const savedUser = localStorage.getItem("user");
-    if (!savedUser) {
-      router.push("/login");
-      return;
-    }
-    setCurrentUser(JSON.parse(savedUser));
-  }, [router]);
+  const user = useRequireAuth();
 
   // Fetch game state on load
   useEffect(() => {
@@ -191,7 +182,7 @@ export default function WizardGamePage() {
   // ---- Handlers ----
 
   const handleLeave = async () => {
-    if (!currentUser || !game) return;
+    if (!user || !game) return;
     setLoading(true);
 
     try {
@@ -200,7 +191,7 @@ export default function WizardGamePage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           gameId: game._id,
-          userId: currentUser._id,
+          userId: user._id,
         }),
       });
 
@@ -213,7 +204,7 @@ export default function WizardGamePage() {
   };
 
   const handleSelectTrump = async (color: string) => {
-    if (!currentUser || !game) return;
+    if (!user || !game) return;
     setLoading(true);
 
     try {
@@ -222,7 +213,7 @@ export default function WizardGamePage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           gameId: game._id,
-          userId: currentUser._id,
+          userId: user._id,
           color,
         }),
       });
@@ -237,7 +228,7 @@ export default function WizardGamePage() {
   };
 
   const handleBid = async (amount: number) => {
-    if (!currentUser || !game) return;
+    if (!user || !game) return;
     setLoading(true);
     setBid(amount);
 
@@ -247,7 +238,7 @@ export default function WizardGamePage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           gameId: game._id,
-          userId: currentUser._id,
+          userId: user._id,
           bid: amount,
         }),
       });
@@ -262,7 +253,7 @@ export default function WizardGamePage() {
   };
 
   const handlePlayCard = async () => {
-    if (!currentUser || !game || !selectedCard) return;
+    if (!user || !game || !selectedCard) return;
     setLoading(true);
 
     try {
@@ -271,7 +262,7 @@ export default function WizardGamePage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           gameId: game._id,
-          userId: currentUser._id,
+          userId: user._id,
           card: selectedCard,
         }),
       });
@@ -291,7 +282,7 @@ export default function WizardGamePage() {
 
   // ---- Derived state ----
 
-  if (!game || !currentUser) {
+  if (!game || !user) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-[#0a0a0f]">
         <p className="animate-pulse text-sm tracking-widest text-white/30 uppercase">
@@ -301,13 +292,12 @@ export default function WizardGamePage() {
     );
   }
 
-  const me = game.players.find((p) => p.userId === currentUser._id);
+  const me = game.players.find((p) => p.userId === user._id);
   const currentPlayer = game.players[game.currentPlayerIndex];
-  const isMyTurn = currentPlayer?.userId === currentUser._id;
-  const isHost = game.hostId === currentUser._id;
+  const isMyTurn = currentPlayer?.userId === user._id;
+  const isHost = game.hostId === user._id;
   const allBidsPlaced = game.players.every((p) => p.bid !== null);
   const isBiddingPhase = game.status === "in_progress" && !allBidsPlaced;
-  const isHost2 = game.hostId === currentUser._id;
   const myBidPlaced = me?.bid !== null;
 
   return (
